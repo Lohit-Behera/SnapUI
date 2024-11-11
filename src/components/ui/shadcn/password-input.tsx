@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 
 const PasswordInput = forwardRef<
   HTMLInputElement,
-  { placeholder: string; className?: string }
->(({ placeholder, className, ...props }, ref) => {
+  { placeholder: string; id?: string; className?: string }
+>(({ placeholder, id, className, ...props }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -23,6 +23,7 @@ const PasswordInput = forwardRef<
         type={showPassword ? "text" : "password"}
         placeholder={placeholder}
         ref={ref}
+        id={id}
         {...props}
       />
       <span

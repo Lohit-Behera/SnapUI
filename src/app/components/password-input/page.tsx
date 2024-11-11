@@ -89,8 +89,39 @@ const PasswordInput = forwardRef<
 export default PasswordInput;
 `;
 
+  const PasswordInputShadCnUsage = `import PasswordInput from "@/components/ui/password-input";
+
+function PasswordInputDemo() {
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="grid gap-2">
+        <Label htmlFor="password">Password</Label>
+        <PasswordInput placeholder="Password" id="password" />
+    </div>
+  );
+}
+
+export default PasswordInputDemo;`;
+
+  const PasswordInputTailwindUsage = `import PasswordInput from "@/components/ui/password-input";
+
+function PasswordInputDemo() {
+  return (
+   <div className="grid gap-2">
+        <label
+            className="text-sm font-medium leading-none"
+            htmlFor="password"
+        >
+            Password
+        </label>
+        <PasswordInputTailwind placeholder="Password" id="password" />
+    </div>
+  );
+}
+
+export default PasswordInputDemo;`;
+
+  return (
+    <div className="grid gap-4">
       <h1 className="text-base md:text-lg font-semibold">Password Input</h1>
       <p className="text-sm md:text-base text-muted-foreground">
         The Password Input component provides a secure and user-friendly field
@@ -109,7 +140,8 @@ export default PasswordInput;
           </TabsTrigger>
         </TabsList>
         {/* ShadCn */}
-        <TabsContent className="flex flex-col space-y-2" value="shadcn">
+        <TabsContent className="grid gap-4" value="shadcn">
+          <h1 className="text-base md:text-lg font-semibold">Usage</h1>
           <div className="flex space-x-2">
             <span
               className={` hover:underline cursor-pointer ${
@@ -133,19 +165,25 @@ export default PasswordInput;
             </span>
           </div>
           {show === "preview" && (
-            <div className="flex items-center w-full p-2 md:p-4 min-h-96 bg-muted/50 rounded-lg">
-              <div className="w-full md:w-[70%] lg:w-[50%] mx-auto">
-                <Label>Password</Label>
-                <PasswordInputShadCn placeholder="Password" />
+            <div className="flex items-center w-full p-2 md:p-4 min-h-96 border rounded-lg">
+              <div className="w-full md:w-[70%] lg:w-[50%] mx-auto grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <PasswordInputShadCn placeholder="Password" id="password" />
               </div>
             </div>
           )}
           {show === "code" && (
-            <CodeBlockComponent language="jsx" code={shadCnCode} />
+            <CodeBlockComponent
+              language="jsx"
+              code={PasswordInputShadCnUsage}
+            />
           )}
+          <h1 className="text-base md:text-lg font-semibold">Code</h1>
+          <CodeBlockComponent language="jsx" code={shadCnCode} />
         </TabsContent>
         {/* TailWind CSS */}
-        <TabsContent className="flex flex-col space-y-2" value="tailwind">
+        <TabsContent className="grid gap-4" value="tailwind">
+          <h1 className="text-base md:text-lg font-semibold">Usage</h1>
           <div className="flex space-x-2">
             <span
               className={` hover:underline cursor-pointer ${
@@ -169,16 +207,26 @@ export default PasswordInput;
             </span>
           </div>
           {show === "preview" && (
-            <div className="flex items-center w-full p-2 md:p-4 min-h-96 bg-muted/50 rounded-lg">
-              <div className="w-full md:w-[70%] lg:w-[50%] mx-auto">
-                <Label>Password</Label>
-                <PasswordInputTailwind placeholder="Password" />
+            <div className="flex items-center w-full p-2 md:p-4 min-h-96 border rounded-lg">
+              <div className="w-full md:w-[70%] lg:w-[50%] mx-auto grid gap-2">
+                <label
+                  className="text-sm font-medium leading-none"
+                  htmlFor="password"
+                >
+                  Password
+                </label>
+                <PasswordInputTailwind placeholder="Password" id="password" />
               </div>
             </div>
           )}
           {show === "code" && (
-            <CodeBlockComponent language="jsx" code={tailwindCode} />
+            <CodeBlockComponent
+              language="jsx"
+              code={PasswordInputTailwindUsage}
+            />
           )}
+          <h1 className="text-base md:text-lg font-semibold">Code</h1>
+          <CodeBlockComponent language="jsx" code={tailwindCode} />
         </TabsContent>
       </Tabs>
     </div>

@@ -17,7 +17,7 @@ const CodeBlockComponent = ({
       <CopyBlock
         text={code}
         language={language}
-        theme={theme === "dark" ? tomorrowNightBright : tomorrow}
+        theme={tomorrowNightBright}
         wrapLongLines
         showLineNumbers={false}
         codeBlock
