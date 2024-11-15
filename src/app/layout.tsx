@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/Header";
 import SideNav from "@/components/SideNav";
 import { Toaster } from "@/components/ui/sonner";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,11 +41,17 @@ export default function RootLayout({
         >
           <div className="min-h-[100vh] flex flex-col">
             <Header />
-            <div className="flex w-full h-full md:w-[95%] lg:w-[90%] mx-auto my-6 ">
-              <SideNav />
-              <main className="flex-1 flex justify-center items-center">
-                {children}
-              </main>
+            <div className="relative flex w-full h-full md:w-[95%] lg:w-[90%] mx-auto ">
+              <div className="container flex-1 items-start md:grid md:grid-cols-[180px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10 pt-14">
+                <aside className="fixed left-0 top-14 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block">
+                  <ScrollArea className="h-full max-h-full">
+                    <SideNav />
+                  </ScrollArea>
+                </aside>
+                <main className="flex-1 flex justify-center items-center my-6">
+                  {children}
+                </main>
+              </div>
             </div>
           </div>
           <Toaster richColors />
