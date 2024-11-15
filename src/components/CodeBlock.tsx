@@ -1,7 +1,6 @@
 "use client";
 
-import { CopyBlock, tomorrowNightBright, tomorrow } from "react-code-blocks";
-import { useTheme } from "next-themes";
+import { CopyBlock, anOldHope } from "react-code-blocks";
 
 const CodeBlockComponent = ({
   language,
@@ -10,17 +9,20 @@ const CodeBlockComponent = ({
   language: string;
   code: string;
 }) => {
-  const { theme } = useTheme();
-
   return (
     <div className="relative overflow-hidden rounded-lg bg-muted/50 p-4 w-full">
       <CopyBlock
         text={code}
         language={language}
-        theme={tomorrowNightBright}
+        theme={anOldHope}
         wrapLongLines
         showLineNumbers={false}
         codeBlock
+        customStyle={{
+          maxHeight: "600px",
+          overflow: "scroll",
+          overflowX: "hidden",
+        }}
       />
     </div>
   );

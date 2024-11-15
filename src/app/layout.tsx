@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/Header";
 import SideNav from "@/components/SideNav";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,13 +40,14 @@ export default function RootLayout({
         >
           <div className="min-h-[100vh] flex flex-col">
             <Header />
-            <div className="flex w-full md:w-[95%] lg:w-[90%] mx-auto my-6">
+            <div className="flex w-full h-full md:w-[95%] lg:w-[90%] mx-auto my-6 ">
               <SideNav />
               <main className="flex-1 flex justify-center items-center">
                 {children}
               </main>
             </div>
           </div>
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>
