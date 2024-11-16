@@ -1,13 +1,8 @@
 "use client";
 
 import { docsConfig } from "@/config/docs-config";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-interface SideBarProps {
-  setOpen?: (open: boolean) => void;
-}
 
 function SideNav() {
   const pathname = usePathname();

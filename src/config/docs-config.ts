@@ -36,6 +36,10 @@ export const docsConfig: DocsConfig[] = [
         title: "Password input",
         path: "/docs/password-input",
       },
+      {
+        title: "Video player",
+        path: "/docs/video-player",
+      },
     ],
   },
 ];
