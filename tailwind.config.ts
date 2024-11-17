@@ -56,6 +56,21 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        "zoom-in-fade-out": {
+          "0%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+          "100%": {
+            opacity: "0.2",
+            transform: "scale(6)",
+          },
+        },
+      },
+      animation: {
+        "zoom-in-fade-out": "zoom-in-fade-out 1s ease-out",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

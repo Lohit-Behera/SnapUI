@@ -48,7 +48,7 @@ export default function RootLayout({
                     <SideNav />
                   </ScrollArea>
                 </aside>
-                <main className="flex-1 flex justify-center items-center my-6">
+                <main className="flex-1 flex justify-center items-center my-6 overflow-x-hidden">
                   {children}
                 </main>
               </div>
