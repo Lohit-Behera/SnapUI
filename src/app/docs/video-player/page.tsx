@@ -21,7 +21,7 @@ function page() {
             Tailwind
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="shadcn">
+        <TabsContent value="shadcn" className="my-40">
           <VideoPlayerShadCn
             src="/Madara_edit_2.mp4"
             thumbnailSrc="/madara.jpg"

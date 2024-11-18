@@ -15,18 +15,20 @@ import {
 } from "lucide-react";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { motion } from "motion/react";
-import Image from "next/image";
 
 function VideoPlayer({
   src,
   thumbnailSrc,
+  ambientGlow = true,
 }: {
   src: string;
   thumbnailSrc: string;
+  ambientGlow?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const STOP_DELAY = 2000;
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -41,7 +43,6 @@ function VideoPlayer({
   const [end, setEnd] = useState(false);
   const [error, setError] = useState(false);
   const [showThumbnail, setShowThumbnail] = useState(true);
-  console.log(showThumbnail);
 
   // Animations
   const [showPause, setShowPause] = useState(false);
@@ -234,6 +235,26 @@ function VideoPlayer({
 
   useEffect(() => {
     const video = videoRef.current;
+    if (ambientGlow) {
+      const canvas = canvasRef.current;
+      if (canvas && video) {
+        const ctx = canvas.getContext("2d");
+
+        const updateCanvas = () => {
+          if (video.paused || video.ended) return;
+          ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+          requestAnimationFrame(updateCanvas);
+        };
+
+        if (video) {
+          video.addEventListener("play", () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            updateCanvas();
+          });
+        }
+      }
+    }
 
     if (video) {
       video.addEventListener("waiting", () => setIsBuffering(true));
@@ -283,9 +304,9 @@ function VideoPlayer({
       <motion.video
         ref={videoRef}
         initial={{ opacity: 0 }}
-        animate={{ opacity: isPlaying ? 1 : 0.8 }} // Fade-in/out animation
+        animate={{ opacity: isPlaying ? 1 : 0.5 }} // Fade-in/out animation
         transition={{ duration: 0.5 }}
-        className={`${isFullScreen ? "rounded-none" : "rounded-lg"}`}
+        className={`z-10 ${isFullScreen ? "rounded-none" : "rounded-lg"}`}
         onClick={togglePlay}
         controls={false}
         onEnded={() => {
@@ -412,7 +433,7 @@ function VideoPlayer({
             }}
             animate={isHovering ? "visible" : "hidden"}
             transition={{ opacity: { duration: 0.3 } }}
-            className={`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-80 to-transparent pointer-events-none ${
+            className={`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-80 to-transparent pointer-events-none z-10 ${
               isFullScreen ? "rounded-none" : "rounded-lg"
             }`}
           ></motion.span>
@@ -554,6 +575,18 @@ function VideoPlayer({
           )}
         </>
       )}
+      {/* Ambient glow effect */}
+      <motion.canvas
+        ref={canvasRef}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isPlaying ? 1 : 0.5 }} // Fade-in/out animation
+        transition={{ duration: 0.5 }}
+        className="w-full h-full absolute inset-0 z-0"
+        style={{
+          filter: `blur(200px)`,
+          WebkitFilter: `blur(100px)`,
+        }}
+      ></motion.canvas>
     </div>
   );
 }
