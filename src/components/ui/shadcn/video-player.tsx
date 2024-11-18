@@ -15,16 +15,31 @@ import {
 } from "lucide-react";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
+
+interface VideoPlayerProps {
+  src: string;
+  thumbnailSrc: string;
+  ambientGlow?: boolean;
+  ambientGlowBlur?: number;
+  containerClassName?: string;
+  videoClassName?: string;
+  circle?: boolean;
+  circleClassName?: string;
+  progressBarClassName?: string;
+}
 
 function VideoPlayer({
   src,
   thumbnailSrc,
   ambientGlow = true,
-}: {
-  src: string;
-  thumbnailSrc: string;
-  ambientGlow?: boolean;
-}) {
+  ambientGlowBlur = 50,
+  containerClassName,
+  videoClassName,
+  circle = false,
+  circleClassName,
+  progressBarClassName,
+}: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -43,6 +58,7 @@ function VideoPlayer({
   const [end, setEnd] = useState(false);
   const [error, setError] = useState(false);
   const [showThumbnail, setShowThumbnail] = useState(true);
+  const [buffer, setBuffer] = useState(0);
 
   // Animations
   const [showPause, setShowPause] = useState(false);
@@ -99,19 +115,46 @@ function VideoPlayer({
     }
   }, []);
 
+  // get duration
   useEffect(() => {
     if (videoRef.current) {
-      // Set video duration once it's loaded
       setDurationSec(videoRef.current.duration);
 
       const interval = setInterval(() => {
         if (videoRef.current) {
-          // Update current time and percentage
           setCurrentTimeSec(videoRef.current.currentTime);
         }
       }, 1000);
 
       return () => clearInterval(interval);
+    }
+  }, [isPlaying]);
+
+  // get buffer percentage
+  useEffect(() => {
+    if (videoRef.current) {
+      let frameId: number;
+
+      const updateBuffer = () => {
+        if (videoRef.current) {
+          const buffered = videoRef.current.buffered;
+          if (buffered.length > 0) {
+            const bufferEnd = buffered.end(buffered.length - 1);
+            const bufferPercentage =
+              (bufferEnd / videoRef.current.duration) * 100;
+            setBuffer(bufferPercentage);
+          }
+        }
+        frameId = requestAnimationFrame(updateBuffer);
+      };
+
+      if (videoRef.current.paused === false) {
+        updateBuffer();
+      }
+
+      return () => {
+        cancelAnimationFrame(frameId);
+      };
     }
   }, [isPlaying]);
 
@@ -280,9 +323,12 @@ function VideoPlayer({
       onMouseUp={() => setIsDragging(false)}
       onKeyDown={handleKeys}
       onMouseMove={handleMouseMove}
-      className={`relative w-full flex justify-center mx-auto focus:outline-none ${
-        isFullScreen ? "rounded-none" : "rounded-lg"
-      } ${isHovering ? "cursor-pointer" : "cursor-none"}`}
+      className={cn(
+        `relative w-full h-full flex justify-center mx-auto focus:outline-none ${
+          isFullScreen ? "rounded-none" : "rounded-lg"
+        } ${isHovering ? "cursor-pointer" : "cursor-none"}`,
+        containerClassName
+      )}
     >
       {/* thumbnail image */}
       {showThumbnail && (
@@ -306,7 +352,10 @@ function VideoPlayer({
         initial={{ opacity: 0 }}
         animate={{ opacity: isPlaying ? 1 : 0.5 }} // Fade-in/out animation
         transition={{ duration: 0.5 }}
-        className={`z-10 ${isFullScreen ? "rounded-none" : "rounded-lg"}`}
+        className={cn(
+          `z-10 ${isFullScreen ? "rounded-none" : "rounded-lg"}`,
+          videoClassName
+        )}
         onClick={togglePlay}
         controls={false}
         onEnded={() => {
@@ -394,9 +443,10 @@ function VideoPlayer({
         )}
       </div>
       {/* Show Forward icon animation */}
-      <div className="absolute inset-y-0 left-[30%] z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 z-30 w-full h-full flex justify-end items-center pointer-events-none overflow-hidden">
         {!showForward && (
           <AnimationIcon
+            className=""
             icon={
               <FastForward
                 className="w-10 md:w-16 h-10 md:h-16"
@@ -409,7 +459,7 @@ function VideoPlayer({
         )}
       </div>
       {/* Show Rewind icon animation */}
-      <div className="absolute inset-y-0 right-[30%] z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 z-30 w-full h-full flex justify-start items-center pointer-events-none overflow-hidden">
         {!showRewind && (
           <AnimationIcon
             icon={
@@ -463,26 +513,42 @@ function VideoPlayer({
                 onClick={handleSeekClick}
                 className="absolute bottom-7 md:bottom-11 w-full h-2 group z-40 "
               >
+                {/* show buffer bar  */}
+                <span
+                  className={`absolute w-full h-full bg-white/50 z-10 pointer-events-none`}
+                  style={{
+                    width: `${buffer}%`,
+                  }}
+                ></span>
+
                 {/* Gray background progress bar (static) */}
                 <span className="absolute w-full h-full bg-gray-500/50 z-0 group-hover:cursor-pointer group-hover:scale-y-125 transition-all duration-200"></span>
 
                 {/* Red progress bar (dynamic) */}
                 <span
-                  className="absolute w-full h-full bg-red-500 group-hover:bg-red-700 group-hover:cursor-pointer group-hover:scale-y-125 transition-all duration-200 z-10 pointer-events-none"
+                  className={cn(
+                    "absolute w-full h-full bg-red-500 group-hover:bg-red-700 group-hover:cursor-pointer group-hover:scale-y-125 transition-all duration-200 z-10 pointer-events-none",
+                    progressBarClassName
+                  )}
                   style={{
                     width: `${progressWidth}%`,
                   }}
                 ></span>
 
                 {/* Circle at the current playback position */}
-                <span
-                  className="absolute top-1/2 transform -translate-y-1/2 bg-white border-2 border-red-500 rounded-full w-4 h-4 z-20 opacity-0 group-hover:cursor-pointer group-hover:opacity-100"
-                  style={{
-                    left: `${progressWidth - 0.5}%`,
-                    transition: "left 0.1s ease-in-out",
-                    pointerEvents: "auto",
-                  }}
-                ></span>
+                {circle && (
+                  <span
+                    className={cn(
+                      "absolute top-1/2 transform -translate-y-1/2 bg-white border-2 border-red-500 rounded-full w-4 h-4 z-20 opacity-0 group-hover:cursor-pointer group-hover:opacity-100",
+                      circleClassName
+                    )}
+                    style={{
+                      left: `${progressWidth - 0.5}%`,
+                      transition: "left 0.1s ease-in-out",
+                      pointerEvents: "auto",
+                    }}
+                  ></span>
+                )}
 
                 {tooltipTime > 0 && (
                   <span
@@ -583,8 +649,8 @@ function VideoPlayer({
         transition={{ duration: 0.5 }}
         className="w-full h-full absolute inset-0 z-0"
         style={{
-          filter: `blur(200px)`,
-          WebkitFilter: `blur(100px)`,
+          filter: `blur(${ambientGlowBlur}px)`,
+          WebkitFilter: `blur(${ambientGlowBlur}px)`,
         }}
       ></motion.canvas>
     </div>
@@ -596,9 +662,10 @@ export default VideoPlayer;
 interface AnimationIconProps {
   icon: React.ReactNode;
   show: boolean;
+  className?: string;
 }
 
-function AnimationIcon({ icon, show }: AnimationIconProps) {
+function AnimationIcon({ icon, show, className }: AnimationIconProps) {
   return (
     <motion.span
       initial={{ opacity: 0, scale: 0 }}
@@ -622,7 +689,10 @@ function AnimationIcon({ icon, show }: AnimationIconProps) {
           ease: [0.11, 0.78, 0.23, 0.9],
         },
       }}
-      className="flex justify-center items-center w-[100px] h-[100px] rounded-full p-4 z-50 bg-black/50"
+      className={cn(
+        "flex justify-center items-center w-[100px] h-[100px] rounded-full p-4 z-50 bg-black/50",
+        className
+      )}
     >
       {icon}
     </motion.span>
