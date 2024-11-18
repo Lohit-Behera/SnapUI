@@ -2,6 +2,7 @@ import {
   CornerUpLeft,
   CornerUpRight,
   FastForward,
+  Loader2,
   Maximize2,
   Minimize2,
   Pause,
@@ -27,7 +28,7 @@ function VideoPlayer({ src }: { src: string }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  console.log(isHovering);
+  const [isBuffering, setIsBuffering] = useState(false);
 
   // Animations
   const [showPause, setShowPause] = useState(false);
@@ -216,6 +217,23 @@ function VideoPlayer({ src }: { src: string }) {
     [currentTimeSec, togglePlay, handleSetTime, toggleFullscreen, toggleMute]
   );
 
+  // Draws the video on the canvas.
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (video) {
+      video.addEventListener("waiting", () => setIsBuffering(true));
+      video.addEventListener("playing", () => setIsBuffering(false));
+    }
+
+    return () => {
+      if (video) {
+        video.removeEventListener("waiting", () => setIsBuffering(true));
+        video.removeEventListener("playing", () => setIsBuffering(false));
+      }
+    };
+  }, []);
+
   return (
     <div
       ref={divRef}
@@ -309,6 +327,12 @@ function VideoPlayer({ src }: { src: string }) {
           />
         )}
       </div>
+      {/* loading animation */}
+      {isPlaying && isBuffering && (
+        <div className="absolute top-0 left-0 w-full h-full z-40 flex justify-center items-center pointer-events-none">
+          <Loader2 className="w-14 h-14 animate-spin" strokeWidth={3} />
+        </div>
+      )}
       {/* Show Rewind icon animation */}
       <div className="absolute inset-y-0 right-[30%] z-50 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
         {!showRewind && (
@@ -324,6 +348,18 @@ function VideoPlayer({ src }: { src: string }) {
           />
         )}
       </div>
+      {/* shadow for controls */}
+      <motion.span
+        variants={{
+          visible: { opacity: 1 },
+          hidden: { opacity: 0 },
+        }}
+        animate={isHovering ? "visible" : "hidden"}
+        transition={{ opacity: { duration: 0.3 } }}
+        className={`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-80 to-transparent pointer-events-none ${
+          isFullScreen ? "rounded-none" : "rounded-lg"
+        }`}
+      ></motion.span>
       {/* controls */}
       <motion.div
         variants={{
@@ -332,11 +368,8 @@ function VideoPlayer({ src }: { src: string }) {
         }}
         animate={isHovering ? "visible" : "hidden"}
         transition={{ opacity: { duration: 0.3 } }}
-        className={`w-full h-[30%] absolute bottom-0 left-0 z-20 bg-gradient-to-t from-black opacity-80 to-transparent ${
-          isFullScreen ? "rounded-none" : "rounded-lg"
-        }`}
+        className={`absolute bottom-0 z-40 w-full flex justify-between pointer-events-auto`}
       >
-        <span></span>
         {/* Progress bar */}
         <div
           onMouseMove={handleProgressHover}
@@ -350,7 +383,7 @@ function VideoPlayer({ src }: { src: string }) {
           }}
           onTouchStart={() => setIsDragging(true)}
           onClick={handleSeekClick}
-          className="absolute bottom-7 md:bottom-11 w-full h-2 group z-40 x"
+          className="absolute bottom-7 md:bottom-11 w-full h-2 group z-40 "
         >
           {/* Gray background progress bar (static) */}
           <span className="absolute w-full h-full bg-gray-500/50 z-0 group-hover:cursor-pointer group-hover:scale-y-125 transition-all duration-200"></span>
