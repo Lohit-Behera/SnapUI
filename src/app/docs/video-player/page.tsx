@@ -22,7 +22,10 @@ function page() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="shadcn">
-          <VideoPlayerShadCn src="/Madara_edit_2.mp4" />
+          <VideoPlayerShadCn
+            src="/Madara_edit_2.mp4"
+            thumbnailSrc="/madara.jpg"
+          />
         </TabsContent>
         <TabsContent value="tailwind"></TabsContent>
       </Tabs>

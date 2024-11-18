@@ -8,13 +8,22 @@ import {
   Pause,
   Play,
   Rewind,
+  RotateCcw,
+  TriangleAlert,
   Volume2,
   VolumeX,
 } from "lucide-react";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { motion } from "motion/react";
+import Image from "next/image";
 
-function VideoPlayer({ src }: { src: string }) {
+function VideoPlayer({
+  src,
+  thumbnailSrc,
+}: {
+  src: string;
+  thumbnailSrc: string;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -29,6 +38,10 @@ function VideoPlayer({ src }: { src: string }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
+  const [end, setEnd] = useState(false);
+  const [error, setError] = useState(false);
+  const [showThumbnail, setShowThumbnail] = useState(true);
+  console.log(showThumbnail);
 
   // Animations
   const [showPause, setShowPause] = useState(false);
@@ -52,6 +65,8 @@ function VideoPlayer({ src }: { src: string }) {
 
   // Toggles play and pause
   const togglePlay = useCallback(() => {
+    setShowThumbnail(false);
+    setEnd(false);
     const videos = document.querySelectorAll("video");
     videos.forEach((video) => {
       if (video !== videoRef.current && !video.paused) {
@@ -217,7 +232,6 @@ function VideoPlayer({ src }: { src: string }) {
     [currentTimeSec, togglePlay, handleSetTime, toggleFullscreen, toggleMute]
   );
 
-  // Draws the video on the canvas.
   useEffect(() => {
     const video = videoRef.current;
 
@@ -249,21 +263,69 @@ function VideoPlayer({ src }: { src: string }) {
         isFullScreen ? "rounded-none" : "rounded-lg"
       } ${isHovering ? "cursor-pointer" : "cursor-none"}`}
     >
+      {/* thumbnail image */}
+      {showThumbnail && (
+        <img
+          src={thumbnailSrc}
+          alt=""
+          className="absolute inset-0 z-40 w-full h-full object-cover rounded-lg"
+          onClick={togglePlay}
+        />
+      )}
+      {/* error overlay */}
+      {error && (
+        <div className="absolute top-0 left-0 w-full h-full z-30 flex flex-col justify-center items-center pointer-events-none bg-gray-400 text-base md:text-lg font-semibold rounded-lg">
+          <TriangleAlert className="mb-1 w-[30%] md:w-[50%] h-[30%] md:h-[50%]" />
+          &nbsp;Something went wrong
+        </div>
+      )}
+      {/* video player */}
       <motion.video
         ref={videoRef}
-        className={`${isFullScreen ? "rounded-none" : "rounded-lg"}`}
-        onClick={togglePlay}
-        controls={false}
         initial={{ opacity: 0 }}
         animate={{ opacity: isPlaying ? 1 : 0.8 }} // Fade-in/out animation
         transition={{ duration: 0.5 }}
+        className={`${isFullScreen ? "rounded-none" : "rounded-lg"}`}
+        onClick={togglePlay}
+        controls={false}
+        onEnded={() => {
+          setEnd(true);
+        }}
+        onError={() => setError(true)}
       >
         <source src={src} type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
+      {/* loading animation */}
+      {isPlaying && isBuffering && (
+        <div className="absolute top-0 left-0 w-full h-full z-40 flex justify-center items-center pointer-events-none">
+          <Loader2 className="w-14 h-14 animate-spin" strokeWidth={3} />
+        </div>
+      )}
+      {/* show Play button */}
+      {!isPlaying && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="absolute top-0 left-0 w-full h-full z-40 flex justify-center items-center pointer-events-none"
+        >
+          <span className="flex justify-center items-center w-[100px] h-[100px] rounded-full p-4 z-40 bg-black/50">
+            <Play className="w-14 h-14" fill="#fff" color="#ffffff" />
+          </span>
+        </motion.div>
+      )}
 
+      {/* show replay button */}
+      {end && (
+        <div className="absolute top-0 left-0 w-full h-full z-40 flex justify-center items-center pointer-events-none">
+          <span className="flex justify-center items-center w-[100px] h-[100px] rounded-full p-4 z-40 bg-black/50">
+            <RotateCcw className="w-14 h-14" />
+          </span>
+        </div>
+      )}
       {/* play icon animation */}
-      <div className="absolute inset-0 z-50 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
         {isPlaying && (
           <AnimationIcon
             icon={
@@ -278,7 +340,7 @@ function VideoPlayer({ src }: { src: string }) {
         )}
       </div>
       {/* pause icon animation */}
-      <div className="absolute inset-0 z-50 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
         {showPause && (
           <AnimationIcon
             icon={
@@ -292,9 +354,8 @@ function VideoPlayer({ src }: { src: string }) {
           />
         )}
       </div>
-
       {/* Mute icon animation */}
-      <div className="absolute inset-0 z-50 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
         {isMuted && (
           <AnimationIcon
             icon={<VolumeX className="w-10 md:w-16 h-10 md:h-16" />}
@@ -302,9 +363,8 @@ function VideoPlayer({ src }: { src: string }) {
           />
         )}
       </div>
-
       {/* UnMute icon animation */}
-      <div className="absolute inset-0 z-50 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
         {!isMuted && (
           <AnimationIcon
             icon={<Volume2 className="w-10 md:w-16 h-10 md:h-16" />}
@@ -313,7 +373,7 @@ function VideoPlayer({ src }: { src: string }) {
         )}
       </div>
       {/* Show Forward icon animation */}
-      <div className="absolute inset-y-0 left-[30%] z-50 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
+      <div className="absolute inset-y-0 left-[30%] z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
         {!showForward && (
           <AnimationIcon
             icon={
@@ -327,14 +387,8 @@ function VideoPlayer({ src }: { src: string }) {
           />
         )}
       </div>
-      {/* loading animation */}
-      {isPlaying && isBuffering && (
-        <div className="absolute top-0 left-0 w-full h-full z-40 flex justify-center items-center pointer-events-none">
-          <Loader2 className="w-14 h-14 animate-spin" strokeWidth={3} />
-        </div>
-      )}
       {/* Show Rewind icon animation */}
-      <div className="absolute inset-y-0 right-[30%] z-50 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
+      <div className="absolute inset-y-0 right-[30%] z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
         {!showRewind && (
           <AnimationIcon
             icon={
@@ -348,152 +402,158 @@ function VideoPlayer({ src }: { src: string }) {
           />
         )}
       </div>
-      {/* shadow for controls */}
-      <motion.span
-        variants={{
-          visible: { opacity: 1 },
-          hidden: { opacity: 0 },
-        }}
-        animate={isHovering ? "visible" : "hidden"}
-        transition={{ opacity: { duration: 0.3 } }}
-        className={`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-80 to-transparent pointer-events-none ${
-          isFullScreen ? "rounded-none" : "rounded-lg"
-        }`}
-      ></motion.span>
-      {/* controls */}
-      <motion.div
-        variants={{
-          visible: { opacity: 1 },
-          hidden: { opacity: 0 },
-        }}
-        animate={isHovering ? "visible" : "hidden"}
-        transition={{ opacity: { duration: 0.3 } }}
-        className={`absolute bottom-0 z-40 w-full flex justify-between pointer-events-auto`}
-      >
-        {/* Progress bar */}
-        <div
-          onMouseMove={handleProgressHover}
-          onMouseLeave={() => setTooltipTime(0)}
-          onMouseDown={() => setIsDragging(true)}
-          onMouseUp={() => setIsDragging(false)}
-          onTouchMove={handleProgressHoverTouch}
-          onTouchEnd={() => {
-            setIsDragging(false);
-            setTooltipTime(0);
-          }}
-          onTouchStart={() => setIsDragging(true)}
-          onClick={handleSeekClick}
-          className="absolute bottom-7 md:bottom-11 w-full h-2 group z-40 "
-        >
-          {/* Gray background progress bar (static) */}
-          <span className="absolute w-full h-full bg-gray-500/50 z-0 group-hover:cursor-pointer group-hover:scale-y-125 transition-all duration-200"></span>
-
-          {/* Red progress bar (dynamic) */}
-          <span
-            className="absolute w-full h-full bg-red-500 group-hover:bg-red-700 group-hover:cursor-pointer group-hover:scale-y-125 transition-all duration-200 z-10 pointer-events-none"
-            style={{
-              width: `${progressWidth}%`,
+      {!showThumbnail && (
+        <>
+          {/* shadow for controls */}
+          <motion.span
+            variants={{
+              visible: { opacity: 1 },
+              hidden: { opacity: 0 },
             }}
-          ></span>
-
-          {/* Circle at the current playback position */}
-          <span
-            className="absolute top-1/2 transform -translate-y-1/2 bg-white border-2 border-red-500 rounded-full w-4 h-4 z-20 opacity-0 group-hover:cursor-pointer group-hover:opacity-100"
-            style={{
-              left: `${progressWidth - 0.5}%`,
-              transition: "left 0.1s ease-in-out",
-              pointerEvents: "auto",
-            }}
-          ></span>
-
-          {tooltipTime > 0 && (
-            <span
-              className="absolute bottom-4 left-0 transform -translate-x-1/2 bg-black text-white text-xs p-1 rounded "
-              style={{
-                left: `${(tooltipTime / durationSec) * 100}%`,
+            animate={isHovering ? "visible" : "hidden"}
+            transition={{ opacity: { duration: 0.3 } }}
+            className={`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-80 to-transparent pointer-events-none ${
+              isFullScreen ? "rounded-none" : "rounded-lg"
+            }`}
+          ></motion.span>
+          {/* controls */}
+          {!error && (
+            <motion.div
+              variants={{
+                visible: { opacity: 1 },
+                hidden: { opacity: 0 },
               }}
+              animate={isHovering ? "visible" : "hidden"}
+              transition={{ opacity: { duration: 0.3 } }}
+              className={`absolute bottom-0 z-40 w-full flex justify-between pointer-events-auto`}
             >
-              {formatTime(tooltipTime)}
-            </span>
+              {/* Progress bar */}
+              <div
+                onMouseMove={handleProgressHover}
+                onMouseLeave={() => setTooltipTime(0)}
+                onMouseDown={() => setIsDragging(true)}
+                onMouseUp={() => setIsDragging(false)}
+                onTouchMove={handleProgressHoverTouch}
+                onTouchEnd={() => {
+                  setIsDragging(false);
+                  setTooltipTime(0);
+                }}
+                onTouchStart={() => setIsDragging(true)}
+                onClick={handleSeekClick}
+                className="absolute bottom-7 md:bottom-11 w-full h-2 group z-40 "
+              >
+                {/* Gray background progress bar (static) */}
+                <span className="absolute w-full h-full bg-gray-500/50 z-0 group-hover:cursor-pointer group-hover:scale-y-125 transition-all duration-200"></span>
+
+                {/* Red progress bar (dynamic) */}
+                <span
+                  className="absolute w-full h-full bg-red-500 group-hover:bg-red-700 group-hover:cursor-pointer group-hover:scale-y-125 transition-all duration-200 z-10 pointer-events-none"
+                  style={{
+                    width: `${progressWidth}%`,
+                  }}
+                ></span>
+
+                {/* Circle at the current playback position */}
+                <span
+                  className="absolute top-1/2 transform -translate-y-1/2 bg-white border-2 border-red-500 rounded-full w-4 h-4 z-20 opacity-0 group-hover:cursor-pointer group-hover:opacity-100"
+                  style={{
+                    left: `${progressWidth - 0.5}%`,
+                    transition: "left 0.1s ease-in-out",
+                    pointerEvents: "auto",
+                  }}
+                ></span>
+
+                {tooltipTime > 0 && (
+                  <span
+                    className="absolute bottom-4 left-0 transform -translate-x-1/2 bg-black text-white text-xs p-1 rounded "
+                    style={{
+                      left: `${(tooltipTime / durationSec) * 100}%`,
+                    }}
+                  >
+                    {formatTime(tooltipTime)}
+                  </span>
+                )}
+              </div>
+              <div className="absolute bottom-0.5 md:bottom-1.5 z-40 w-full flex justify-between">
+                <div className="flex">
+                  <span className="p-1">
+                    {isPlaying ? (
+                      <Pause
+                        className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                        strokeWidth={1}
+                        fill="#fff"
+                        color="#ffffff"
+                        onClick={togglePlay}
+                      />
+                    ) : (
+                      <Play
+                        className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                        fill="#fff"
+                        color="#ffffff"
+                        onClick={togglePlay}
+                      />
+                    )}
+                  </span>
+                  <span className="text-sm md:text-base my-auto mx-2">
+                    {formatTime(currentTimeSec ? currentTimeSec : 0)} /{" "}
+                    {formatTime(durationSec ? durationSec : 0)}
+                  </span>
+                  <span className="p-1">
+                    <CornerUpLeft
+                      className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                      onClick={() => {
+                        if (currentTimeSec > 5) {
+                          handleSetTime(currentTimeSec - 5);
+                          setShowRewind(true);
+                          setTimeout(() => setShowRewind(false), 100);
+                        }
+                      }}
+                    />
+                  </span>
+                  <span className="p-1">
+                    <CornerUpRight
+                      className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                      onClick={() => {
+                        if (durationSec && durationSec - currentTimeSec > 5) {
+                          handleSetTime(currentTimeSec + 5);
+                          setShowForward(true);
+                          setTimeout(() => setShowForward(false), 100);
+                        }
+                      }}
+                    />
+                  </span>
+                  <span className="p-1">
+                    {isMuted ? (
+                      <VolumeX
+                        className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                        onClick={toggleMute}
+                      />
+                    ) : (
+                      <Volume2
+                        className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                        onClick={toggleMute}
+                      />
+                    )}
+                  </span>
+                </div>
+                <div className="mr-2 p-1">
+                  {isFullScreen ? (
+                    <Minimize2
+                      className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                      onClick={toggleFullscreen}
+                    />
+                  ) : (
+                    <Maximize2
+                      className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                      onClick={toggleFullscreen}
+                    />
+                  )}
+                </div>
+              </div>
+            </motion.div>
           )}
-        </div>
-        <div className="absolute bottom-0.5 md:bottom-1.5 z-40 w-full flex justify-between">
-          <div className="flex">
-            <span className="p-1">
-              {isPlaying ? (
-                <Pause
-                  className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                  strokeWidth={1}
-                  fill="#fff"
-                  color="#ffffff"
-                  onClick={togglePlay}
-                />
-              ) : (
-                <Play
-                  className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                  fill="#fff"
-                  color="#ffffff"
-                  onClick={togglePlay}
-                />
-              )}
-            </span>
-            <span className="text-sm md:text-base my-auto mx-2">
-              {formatTime(currentTimeSec ? currentTimeSec : 0)} /{" "}
-              {formatTime(durationSec ? durationSec : 0)}
-            </span>
-            <span className="p-1">
-              <CornerUpLeft
-                className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                onClick={() => {
-                  if (currentTimeSec > 5) {
-                    handleSetTime(currentTimeSec - 5);
-                    setShowRewind(true);
-                    setTimeout(() => setShowRewind(false), 100);
-                  }
-                }}
-              />
-            </span>
-            <span className="p-1">
-              <CornerUpRight
-                className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                onClick={() => {
-                  if (durationSec && durationSec - currentTimeSec > 5) {
-                    handleSetTime(currentTimeSec + 5);
-                    setShowForward(true);
-                    setTimeout(() => setShowForward(false), 100);
-                  }
-                }}
-              />
-            </span>
-            <span className="p-1">
-              {isMuted ? (
-                <VolumeX
-                  className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                  onClick={toggleMute}
-                />
-              ) : (
-                <Volume2
-                  className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                  onClick={toggleMute}
-                />
-              )}
-            </span>
-          </div>
-          <div className="mr-2 p-1">
-            {isFullScreen ? (
-              <Minimize2
-                className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                onClick={toggleFullscreen}
-              />
-            ) : (
-              <Maximize2
-                className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                onClick={toggleFullscreen}
-              />
-            )}
-          </div>
-        </div>
-      </motion.div>
+        </>
+      )}
     </div>
   );
 }
