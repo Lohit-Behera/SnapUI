@@ -46,28 +46,31 @@ function VideoPlayer({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const STOP_DELAY = 2000;
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTimeSec, setCurrentTimeSec] = useState(0);
-  const [durationSec, setDurationSec] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [tooltipTime, setTooltipTime] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isBuffering, setIsBuffering] = useState(false);
-  const [end, setEnd] = useState(false);
-  const [error, setError] = useState(false);
-  const [showThumbnail, setShowThumbnail] = useState(true);
-  const [buffer, setBuffer] = useState(0);
+  const [state, setState] = useState({
+    isPlaying: false,
+    currentTimeSec: 0,
+    durationSec: 0,
+    isDragging: false,
+    tooltipTime: 0,
+    isMuted: false,
+    isFullScreen: false,
+    isHovering: false,
+    isBuffering: false,
+    end: false,
+    error: false,
+    showThumbnail: true,
+    buffer: 0,
+    showPause: false,
+    showForward: false,
+    showRewind: false,
+  });
 
-  // Animations
-  const [showPause, setShowPause] = useState(false);
-  const [showForward, setShowForward] = useState(false);
-  const [showRewind, setShowRewind] = useState(false);
+  const updateState = (key: keyof typeof state, value: any) =>
+    setState((prev) => ({ ...prev, [key]: value }));
 
   // Handles mouse move event within the div
   const handleMouseMove = useCallback(() => {
-    setIsHovering(true);
+    updateState("isHovering", true);
 
     // If there was a previous timeout, clear it
     if (timeoutRef.current) {
@@ -76,30 +79,30 @@ function VideoPlayer({
 
     // Set a new timeout to detect when the mouse stops
     timeoutRef.current = setTimeout(() => {
-      setIsHovering(false);
+      updateState("isHovering", false);
     }, STOP_DELAY);
   }, []);
 
   // Toggles play and pause
   const togglePlay = useCallback(() => {
-    setShowThumbnail(false);
-    setEnd(false);
+    updateState("showThumbnail", false);
+    updateState("end", false);
     const videos = document.querySelectorAll("video");
     videos.forEach((video) => {
       if (video !== videoRef.current && !video.paused) {
-        setIsPlaying(false);
+        updateState("isPlaying", false);
         video.pause();
       }
     });
     if (videoRef.current?.paused) {
       videoRef.current.play();
-      setIsPlaying(true);
+      updateState("isPlaying", true);
     } else {
       videoRef.current?.pause();
-      setIsPlaying(false);
-      setShowPause(true);
+      updateState("isPlaying", false);
+      updateState("showPause", true);
       setTimeout(() => {
-        setShowPause(false);
+        updateState("showPause", false);
       }, 1000);
     }
   }, []);
@@ -108,27 +111,26 @@ function VideoPlayer({
   const toggleFullscreen = useCallback(() => {
     if (document.fullscreenElement) {
       document.exitFullscreen();
-      setIsFullScreen(false);
+      updateState("isFullScreen", false);
     } else if (divRef.current) {
       divRef.current.requestFullscreen();
-      setIsFullScreen(true);
+      updateState("isFullScreen", true);
     }
   }, []);
 
   // get duration
   useEffect(() => {
     if (videoRef.current) {
-      setDurationSec(videoRef.current.duration);
-
+      updateState("durationSec", videoRef.current.duration);
       const interval = setInterval(() => {
         if (videoRef.current) {
-          setCurrentTimeSec(videoRef.current.currentTime);
+          updateState("currentTimeSec", videoRef.current.currentTime);
         }
       }, 1000);
 
       return () => clearInterval(interval);
     }
-  }, [isPlaying]);
+  }, [state.isPlaying]);
 
   // get buffer percentage
   useEffect(() => {
@@ -142,7 +144,8 @@ function VideoPlayer({
             const bufferEnd = buffered.end(buffered.length - 1);
             const bufferPercentage =
               (bufferEnd / videoRef.current.duration) * 100;
-            setBuffer(bufferPercentage);
+
+            updateState("buffer", bufferPercentage);
           }
         }
         frameId = requestAnimationFrame(updateBuffer);
@@ -156,10 +159,12 @@ function VideoPlayer({
         cancelAnimationFrame(frameId);
       };
     }
-  }, [isPlaying]);
+  }, [state.isPlaying]);
 
   // Calculate progress bar width based on current time and duration
-  const progressWidth = durationSec ? (currentTimeSec / durationSec) * 100 : 0;
+  const progressWidth = state.durationSec
+    ? (state.currentTimeSec / state.durationSec) * 100
+    : 0;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -168,63 +173,42 @@ function VideoPlayer({
   };
 
   // Handle mouse/touch movement over the progress bar for the tooltip
-  const handleProgressHover = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (durationSec) {
+  const handleProgressHover = (
+    e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+  ) => {
+    if (state.durationSec) {
       const progressBar = e.currentTarget;
-      const mouseX = e.clientX - progressBar.getBoundingClientRect().left;
-      const percentage = (mouseX / progressBar.offsetWidth) * 100;
-      const newTime = (percentage / 100) * durationSec;
-      setTooltipTime(newTime);
-    }
-    if (isDragging && durationSec) {
-      const progressBar = e.currentTarget;
-      const mouseX = e.clientX - progressBar.getBoundingClientRect().left;
-      const percentage = (mouseX / progressBar.offsetWidth) * 100;
-      const newTime = (percentage / 100) * durationSec;
-      if (videoRef.current) {
-        videoRef.current.currentTime = newTime;
+      const clientX =
+        "touches" in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+      const offsetX = clientX - progressBar.getBoundingClientRect().left;
+      const percentage = (offsetX / progressBar.offsetWidth) * 100;
+      const newTime = (percentage / 100) * state.durationSec;
+
+      updateState("tooltipTime", newTime);
+
+      if (state.isDragging) {
+        if (videoRef.current) {
+          videoRef.current.currentTime = newTime;
+        }
+        updateState("currentTimeSec", newTime);
       }
-      setCurrentTimeSec(newTime);
     }
   };
 
-  // Handle touch movement over the progress bar for the tooltip
-  const handleProgressHoverTouch = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (durationSec) {
-      const progressBar = e.currentTarget;
-      const touchX =
-        e.touches[0].clientX - progressBar.getBoundingClientRect().left;
-      const percentage = (touchX / progressBar.offsetWidth) * 100;
-      const newTime = (percentage / 100) * durationSec;
-      setTooltipTime(newTime);
-    }
-    if (isDragging && durationSec) {
-      const progressBar = e.currentTarget;
-      const touchX =
-        e.touches[0].clientX - progressBar.getBoundingClientRect().left;
-      const percentage = (touchX / progressBar.offsetWidth) * 100;
-      const newTime = (percentage / 100) * durationSec;
-      if (videoRef.current) {
-        videoRef.current.currentTime = newTime;
-      }
-      setCurrentTimeSec(newTime);
-    }
-  };
-
-  // Handle click/touch on the seekbar to jump to that position
+  // Handle click/touch on the seek bar to jump to that position
   const handleSeekClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (durationSec) {
+    if (state.durationSec) {
       const progressBar = e.currentTarget;
       const offsetX = e.clientX;
       const progressBarX = progressBar.getBoundingClientRect().left;
       const clickPosition = offsetX - progressBarX;
       const percentage = (clickPosition / progressBar.offsetWidth) * 100;
-      const newTime = (percentage / 100) * durationSec;
+      const newTime = (percentage / 100) * state.durationSec;
       if (videoRef.current) {
         videoRef.current.currentTime = newTime;
       }
-      setCurrentTimeSec(newTime);
-      setIsPlaying(true); // Automatically start playing once you seek
+      updateState("currentTimeSec", newTime);
+      updateState("isPlaying", true); // Automatically start playing once you seek
     }
   };
 
@@ -232,22 +216,22 @@ function VideoPlayer({
   const handleSetTime = (time: number) => {
     if (videoRef.current) {
       videoRef.current.currentTime = time;
-      setCurrentTimeSec(time);
+      updateState("currentTimeSec", time);
     }
   };
 
   // toggle volume toggle (mute/unmute)
   const toggleMute = useCallback(() => {
     if (videoRef.current) {
-      if (isMuted) {
+      if (state.isMuted) {
         videoRef.current.volume = 1;
-        setIsMuted(false);
+        updateState("isMuted", false);
       } else {
         videoRef.current.volume = 0;
-        setIsMuted(true);
+        updateState("isMuted", true);
       }
     }
-  }, [isMuted]);
+  }, [state.isMuted]);
 
   // Handles key presses.
   const handleKeys = useCallback(
@@ -258,22 +242,28 @@ function VideoPlayer({
       } else if (e.key === "f") {
         toggleFullscreen();
       } else if (e.key === "ArrowRight") {
-        if (durationSec && durationSec - currentTimeSec > 5) {
-          handleSetTime(currentTimeSec + 5);
-          setShowForward(true);
-          setTimeout(() => setShowForward(false), 100);
+        if (state.durationSec && state.durationSec - state.currentTimeSec > 5) {
+          handleSetTime(state.currentTimeSec + 5);
+          updateState("showForward", true);
+          setTimeout(() => updateState("showForward", false), 1000);
         }
       } else if (e.key === "ArrowLeft") {
-        if (currentTimeSec > 5) {
-          handleSetTime(currentTimeSec - 5);
-          setShowRewind(true);
-          setTimeout(() => setShowRewind(false), 100);
+        if (state.currentTimeSec > 5) {
+          handleSetTime(state.currentTimeSec - 5);
+          updateState("showRewind", true);
+          setTimeout(() => updateState("showRewind", false), 100);
         }
       } else if (e.key === "m") {
         toggleMute();
       }
     },
-    [currentTimeSec, togglePlay, handleSetTime, toggleFullscreen, toggleMute]
+    [
+      state.currentTimeSec,
+      togglePlay,
+      handleSetTime,
+      toggleFullscreen,
+      toggleMute,
+    ]
   );
 
   useEffect(() => {
@@ -300,14 +290,20 @@ function VideoPlayer({
     }
 
     if (video) {
-      video.addEventListener("waiting", () => setIsBuffering(true));
-      video.addEventListener("playing", () => setIsBuffering(false));
+      video.addEventListener("waiting", () => updateState("isBuffering", true));
+      video.addEventListener("playing", () =>
+        updateState("isBuffering", false)
+      );
     }
 
     return () => {
       if (video) {
-        video.removeEventListener("waiting", () => setIsBuffering(true));
-        video.removeEventListener("playing", () => setIsBuffering(false));
+        video.removeEventListener("waiting", () =>
+          updateState("isBuffering", true)
+        );
+        video.removeEventListener("playing", () =>
+          updateState("isBuffering", false)
+        );
       }
     };
   }, []);
@@ -317,21 +313,21 @@ function VideoPlayer({
       ref={divRef}
       onDoubleClick={toggleFullscreen}
       onTouchEnd={() => {
-        setIsDragging(false);
-        setTooltipTime(0);
+        updateState("isDragging", false);
+        updateState("tooltipTime", 0);
       }}
-      onMouseUp={() => setIsDragging(false)}
+      onMouseUp={() => updateState("isDragging", false)}
       onKeyDown={handleKeys}
       onMouseMove={handleMouseMove}
       className={cn(
         `relative w-full h-full flex justify-center mx-auto focus:outline-none ${
-          isFullScreen ? "rounded-none" : "rounded-lg"
-        } ${isHovering ? "cursor-pointer" : "cursor-none"}`,
+          state.isFullScreen ? "rounded-none" : "rounded-lg"
+        } ${state.isHovering ? "cursor-pointer" : "cursor-none"}`,
         containerClassName
       )}
     >
       {/* thumbnail image */}
-      {showThumbnail && (
+      {state.showThumbnail && (
         <img
           src={thumbnailSrc}
           alt=""
@@ -340,7 +336,7 @@ function VideoPlayer({
         />
       )}
       {/* error overlay */}
-      {error && (
+      {state.error && (
         <div className="absolute top-0 left-0 w-full h-full z-30 flex flex-col justify-center items-center pointer-events-none bg-gray-400 text-base md:text-lg font-semibold rounded-lg">
           <TriangleAlert className="mb-1 w-[30%] md:w-[50%] h-[30%] md:h-[50%]" />
           &nbsp;Something went wrong
@@ -350,30 +346,28 @@ function VideoPlayer({
       <motion.video
         ref={videoRef}
         initial={{ opacity: 0 }}
-        animate={{ opacity: isPlaying ? 1 : 0.5 }} // Fade-in/out animation
+        animate={{ opacity: state.isPlaying ? 1 : 0.5 }} // Fade-in/out animation
         transition={{ duration: 0.5 }}
         className={cn(
-          `z-10 ${isFullScreen ? "rounded-none" : "rounded-lg"}`,
+          `z-10 ${state.isFullScreen ? "rounded-none" : "rounded-lg"}`,
           videoClassName
         )}
         onClick={togglePlay}
         controls={false}
-        onEnded={() => {
-          setEnd(true);
-        }}
-        onError={() => setError(true)}
+        onEnded={() => updateState("end", true)}
+        onError={() => updateState("error", true)}
       >
         <source src={src} type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
       {/* loading animation */}
-      {isPlaying && isBuffering && (
+      {state.isPlaying && state.isBuffering && (
         <div className="absolute top-0 left-0 w-full h-full z-40 flex justify-center items-center pointer-events-none">
           <Loader2 className="w-14 h-14 animate-spin" strokeWidth={3} />
         </div>
       )}
       {/* show Play button */}
-      {!isPlaying && (
+      {!state.isPlaying && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -387,7 +381,7 @@ function VideoPlayer({
       )}
 
       {/* show replay button */}
-      {end && (
+      {state.end && (
         <div className="absolute top-0 left-0 w-full h-full z-40 flex justify-center items-center pointer-events-none">
           <span className="flex justify-center items-center w-[100px] h-[100px] rounded-full p-4 z-40 bg-black/50">
             <RotateCcw className="w-14 h-14" />
@@ -396,7 +390,7 @@ function VideoPlayer({
       )}
       {/* play icon animation */}
       <div className="absolute inset-0 z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
-        {isPlaying && (
+        {state.isPlaying && (
           <AnimationIcon
             icon={
               <Play
@@ -405,13 +399,13 @@ function VideoPlayer({
                 color="#ffffff"
               />
             }
-            show={isPlaying}
+            show={state.isPlaying}
           />
         )}
       </div>
       {/* pause icon animation */}
       <div className="absolute inset-0 z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
-        {showPause && (
+        {state.showPause && (
           <AnimationIcon
             icon={
               <Pause
@@ -420,31 +414,31 @@ function VideoPlayer({
                 color="#ffffff"
               />
             }
-            show={showPause}
+            show={state.showPause}
           />
         )}
       </div>
       {/* Mute icon animation */}
       <div className="absolute inset-0 z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
-        {isMuted && (
+        {state.isMuted && (
           <AnimationIcon
             icon={<VolumeX className="w-10 md:w-16 h-10 md:h-16" />}
-            show={isMuted}
+            show={state.isMuted}
           />
         )}
       </div>
       {/* UnMute icon animation */}
       <div className="absolute inset-0 z-30 w-full h-full flex justify-center items-center pointer-events-none overflow-hidden">
-        {!isMuted && (
+        {!state.isMuted && (
           <AnimationIcon
             icon={<Volume2 className="w-10 md:w-16 h-10 md:h-16" />}
-            show={!isMuted}
+            show={!state.isMuted}
           />
         )}
       </div>
       {/* Show Forward icon animation */}
       <div className="absolute inset-0 z-30 w-full h-full flex justify-end items-center pointer-events-none overflow-hidden">
-        {!showForward && (
+        {!state.showForward && (
           <AnimationIcon
             className=""
             icon={
@@ -454,13 +448,13 @@ function VideoPlayer({
                 color="#ffffff"
               />
             }
-            show={!showForward}
+            show={!state.showForward}
           />
         )}
       </div>
       {/* Show Rewind icon animation */}
       <div className="absolute inset-0 z-30 w-full h-full flex justify-start items-center pointer-events-none overflow-hidden">
-        {!showRewind && (
+        {!state.showRewind && (
           <AnimationIcon
             icon={
               <Rewind
@@ -469,11 +463,11 @@ function VideoPlayer({
                 color="#ffffff"
               />
             }
-            show={!showRewind}
+            show={!state.showRewind}
           />
         )}
       </div>
-      {!showThumbnail && (
+      {!state.showThumbnail && (
         <>
           {/* shadow for controls */}
           <motion.span
@@ -481,35 +475,35 @@ function VideoPlayer({
               visible: { opacity: 1 },
               hidden: { opacity: 0 },
             }}
-            animate={isHovering ? "visible" : "hidden"}
+            animate={state.isHovering ? "visible" : "hidden"}
             transition={{ opacity: { duration: 0.3 } }}
             className={`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-80 to-transparent pointer-events-none z-10 ${
-              isFullScreen ? "rounded-none" : "rounded-lg"
+              state.isFullScreen ? "rounded-none" : "rounded-lg"
             }`}
           ></motion.span>
           {/* controls */}
-          {!error && (
+          {!state.error && (
             <motion.div
               variants={{
                 visible: { opacity: 1 },
                 hidden: { opacity: 0 },
               }}
-              animate={isHovering ? "visible" : "hidden"}
+              animate={state.isHovering ? "visible" : "hidden"}
               transition={{ opacity: { duration: 0.3 } }}
               className={`absolute bottom-0 z-40 w-full flex justify-between pointer-events-auto`}
             >
               {/* Progress bar */}
               <div
                 onMouseMove={handleProgressHover}
-                onMouseLeave={() => setTooltipTime(0)}
-                onMouseDown={() => setIsDragging(true)}
-                onMouseUp={() => setIsDragging(false)}
-                onTouchMove={handleProgressHoverTouch}
+                onMouseLeave={() => updateState("tooltipTime", 0)}
+                onMouseDown={() => updateState("isDragging", true)}
+                onMouseUp={() => updateState("isDragging", false)}
+                onTouchMove={handleProgressHover}
                 onTouchEnd={() => {
-                  setIsDragging(false);
-                  setTooltipTime(0);
+                  updateState("isDragging", false);
+                  updateState("tooltipTime", 0);
                 }}
-                onTouchStart={() => setIsDragging(true)}
+                onTouchStart={() => updateState("isDragging", true)}
                 onClick={handleSeekClick}
                 className="absolute bottom-7 md:bottom-11 w-full h-2 group z-40 "
               >
@@ -517,7 +511,7 @@ function VideoPlayer({
                 <span
                   className={`absolute w-full h-full bg-white/50 z-10 pointer-events-none`}
                   style={{
-                    width: `${buffer}%`,
+                    width: `${state.buffer}%`,
                   }}
                 ></span>
 
@@ -550,21 +544,21 @@ function VideoPlayer({
                   ></span>
                 )}
 
-                {tooltipTime > 0 && (
+                {state.tooltipTime > 0 && (
                   <span
                     className="absolute bottom-4 left-0 transform -translate-x-1/2 bg-black text-white text-xs p-1 rounded "
                     style={{
-                      left: `${(tooltipTime / durationSec) * 100}%`,
+                      left: `${(state.tooltipTime / state.durationSec) * 100}%`,
                     }}
                   >
-                    {formatTime(tooltipTime)}
+                    {formatTime(state.tooltipTime)}
                   </span>
                 )}
               </div>
               <div className="absolute bottom-0.5 md:bottom-1.5 z-40 w-full flex justify-between">
                 <div className="flex">
                   <span className="p-1">
-                    {isPlaying ? (
+                    {state.isPlaying ? (
                       <Pause
                         className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
                         strokeWidth={1}
@@ -582,17 +576,22 @@ function VideoPlayer({
                     )}
                   </span>
                   <span className="text-sm md:text-base my-auto mx-2">
-                    {formatTime(currentTimeSec ? currentTimeSec : 0)} /{" "}
-                    {formatTime(durationSec ? durationSec : 0)}
+                    {formatTime(
+                      state.currentTimeSec ? state.currentTimeSec : 0
+                    )}{" "}
+                    / {formatTime(state.durationSec ? state.durationSec : 0)}
                   </span>
                   <span className="p-1">
                     <CornerUpLeft
                       className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
                       onClick={() => {
-                        if (currentTimeSec > 5) {
-                          handleSetTime(currentTimeSec - 5);
-                          setShowRewind(true);
-                          setTimeout(() => setShowRewind(false), 100);
+                        if (state.currentTimeSec > 5) {
+                          handleSetTime(state.currentTimeSec - 5);
+                          updateState("showRewind", true);
+                          setTimeout(
+                            () => updateState("showRewind", false),
+                            100
+                          );
                         }
                       }}
                     />
@@ -601,16 +600,22 @@ function VideoPlayer({
                     <CornerUpRight
                       className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
                       onClick={() => {
-                        if (durationSec && durationSec - currentTimeSec > 5) {
-                          handleSetTime(currentTimeSec + 5);
-                          setShowForward(true);
-                          setTimeout(() => setShowForward(false), 100);
+                        if (
+                          state.durationSec &&
+                          state.durationSec - state.currentTimeSec > 5
+                        ) {
+                          handleSetTime(state.currentTimeSec + 5);
+                          updateState("showForward", true);
+                          setTimeout(
+                            () => updateState("showForward", false),
+                            100
+                          );
                         }
                       }}
                     />
                   </span>
                   <span className="p-1">
-                    {isMuted ? (
+                    {state.isMuted ? (
                       <VolumeX
                         className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
                         onClick={toggleMute}
@@ -624,7 +629,7 @@ function VideoPlayer({
                   </span>
                 </div>
                 <div className="mr-2 p-1">
-                  {isFullScreen ? (
+                  {state.isFullScreen ? (
                     <Minimize2
                       className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
                       onClick={toggleFullscreen}
@@ -645,7 +650,7 @@ function VideoPlayer({
       <motion.canvas
         ref={canvasRef}
         initial={{ opacity: 0 }}
-        animate={{ opacity: isPlaying ? 1 : 0.5 }} // Fade-in/out animation
+        animate={{ opacity: state.isPlaying ? 1 : 0.5 }} // Fade-in/out animation
         transition={{ duration: 0.5 }}
         className="w-full h-full absolute inset-0 z-0"
         style={{
