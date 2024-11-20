@@ -1,4 +1,4 @@
-import {
+export const videoPlayerCode = `import {
   CornerUpLeft,
   CornerUpRight,
   FastForward,
@@ -171,7 +171,7 @@ function VideoPlayer({
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? "0" + secs : secs}`;
+    return \`\${mins}:\${secs < 10 ? "0" + secs : secs}\`;
   };
 
   // Handle mouse/touch movement over the progress bar for the tooltip
@@ -322,9 +322,9 @@ function VideoPlayer({
       onKeyDown={handleKeys}
       onMouseMove={handleMouseMove}
       className={cn(
-        `relative w-full h-full flex justify-center mx-auto focus:outline-none ${
+        \`relative w-full h-full flex justify-center mx-auto focus:outline-none \${
           state.isFullScreen ? "rounded-none" : "rounded-lg"
-        } ${state.isHovering ? "cursor-pointer" : "cursor-none"}`,
+        } \${state.isHovering ? "cursor-pointer" : "cursor-none"}\`,
         containerClassName
       )}
     >
@@ -351,7 +351,7 @@ function VideoPlayer({
         animate={{ opacity: state.isPlaying ? 1 : 0.5 }} // Fade-in/out animation
         transition={{ duration: 0.5 }}
         className={cn(
-          `z-10 ${state.isFullScreen ? "rounded-none" : "rounded-lg"}`,
+          \`z-10 \${state.isFullScreen ? "rounded-none" : "rounded-lg"}\`,
           videoClassName
         )}
         onClick={togglePlay}
@@ -479,9 +479,9 @@ function VideoPlayer({
             }}
             animate={state.isHovering ? "visible" : "hidden"}
             transition={{ opacity: { duration: 0.3 } }}
-            className={`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-10 ${
+            className={\`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-10 \${
               state.isFullScreen ? "rounded-none" : "rounded-lg"
-            }`}
+            }\`}
           ></motion.span>
           {/* controls */}
           {!state.error && (
@@ -492,7 +492,7 @@ function VideoPlayer({
               }}
               animate={state.isHovering ? "visible" : "hidden"}
               transition={{ opacity: { duration: 0.3 } }}
-              className={`absolute bottom-0 z-40 w-full flex justify-between pointer-events-auto`}
+              className={\`absolute bottom-0 z-40 w-full flex justify-between pointer-events-auto\`}
             >
               {/* Progress bar */}
               <div
@@ -514,9 +514,9 @@ function VideoPlayer({
               >
                 {/* show buffer bar  */}
                 <span
-                  className={`absolute w-full h-full bg-white/50 z-10 pointer-events-none`}
+                  className={\`absolute w-full h-full bg-white/50 z-10 pointer-events-none\`}
                   style={{
-                    width: `${state.buffer}%`,
+                    width: \`\${state.buffer}%\`,
                   }}
                 ></span>
 
@@ -530,7 +530,7 @@ function VideoPlayer({
                     progressBarClassName
                   )}
                   style={{
-                    width: `${progressWidth}%`,
+                    width: \`\${progressWidth}%\`,
                   }}
                 ></span>
 
@@ -542,7 +542,7 @@ function VideoPlayer({
                       circleClassName
                     )}
                     style={{
-                      left: `${progressWidth - 0.5}%`,
+                      left: \`\${progressWidth - 0.5}%\`,
                       transition: "left 0.1s ease-in-out",
                       pointerEvents: "auto",
                     }}
@@ -553,7 +553,7 @@ function VideoPlayer({
                   <span
                     className="absolute bottom-4 left-0 transform -translate-x-1/2 bg-black text-white text-xs p-1 rounded "
                     style={{
-                      left: `${(state.tooltipTime / state.durationSec) * 100}%`,
+                      left: \`\${(state.tooltipTime / state.durationSec) * 100}%\`,
                     }}
                   >
                     {formatTime(state.tooltipTime)}
@@ -659,8 +659,8 @@ function VideoPlayer({
         transition={{ duration: 0.5 }}
         className="w-full h-full absolute inset-0 z-0"
         style={{
-          filter: `blur(${ambientGlowBlur}px)`,
-          WebkitFilter: `blur(${ambientGlowBlur}px)`,
+          filter: \`blur(\${ambientGlowBlur}px)\`,
+          WebkitFilter: \`blur(\${ambientGlowBlur}px)\`,
         }}
       ></motion.canvas>
     </div>
@@ -708,3 +708,5 @@ function AnimationIcon({ icon, show, className }: AnimationIconProps) {
     </motion.span>
   );
 }
+
+`;
