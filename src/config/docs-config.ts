@@ -29,6 +29,10 @@ export const docsConfig: DocsConfig[] = [
     title: "Components",
     pages: [
       {
+        title: "Buttons",
+        path: "/docs/buttons",
+      },
+      {
         title: "Drag and drop",
         path: "/docs/drag-n-drop",
       },

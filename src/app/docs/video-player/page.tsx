@@ -143,7 +143,7 @@ function page() {
           {tableData.map((item) => (
             <TableRow key={item.name}>
               <TableCell>{item.name}</TableCell>
-              <TableCell>
+              <TableCell className="flex justify-center">
                 <Badge variant="secondary" className="font-mono">
                   {item.type}
                 </Badge>

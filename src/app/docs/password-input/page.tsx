@@ -6,6 +6,16 @@ import PasswordInputTailwind from "@/components/ui/tailwind/password-input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CodeBlockComponent from "@/components/CodeBlock";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 function PasswordInputComponent() {
   const [show, setShow] = useState("preview");
@@ -120,6 +130,33 @@ function PasswordInputDemo() {
 
 export default PasswordInputDemo;`;
 
+  const tableData = [
+    {
+      name: "placeholder",
+      type: "string",
+      default: <p>&quot; &quot;</p>,
+      description: "The placeholder text to display when the input is empty.",
+    },
+    {
+      name: "className",
+      type: "string",
+      default: <p>&quot; &quot;</p>,
+      description: "Additional class names to apply to the input element.",
+    },
+    {
+      name: "id",
+      type: "string",
+      default: <p>&quot; &quot;</p>,
+      description: "The ID of the input element.",
+    },
+    {
+      name: "disabled",
+      type: "boolean",
+      default: "false",
+      description: "Whether the input should be disabled.",
+    },
+  ];
+
   return (
     <div className="grid gap-4">
       <h1 className="text-base md:text-lg font-semibold">Password Input</h1>
@@ -229,6 +266,36 @@ export default PasswordInputDemo;`;
           <CodeBlockComponent language="jsx" code={tailwindCode} />
         </TabsContent>
       </Tabs>
+      <h1 className="text-base md:text-lg font-semibold">Props</h1>
+      <Table>
+        <TableCaption>A list of props.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Prop</TableHead>
+            <TableHead className="text-center">Type</TableHead>
+            <TableHead className="text-center">Default</TableHead>
+            <TableHead className="text-center hidden md:table-cell">
+              Description
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {tableData.map((item) => (
+            <TableRow key={item.name}>
+              <TableCell>{item.name}</TableCell>
+              <TableCell className="flex justify-center">
+                <Badge variant="secondary" className="font-mono">
+                  {item.type}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-center">{item.default}</TableCell>
+              <TableCell className="hidden md:table-cell">
+                {item.description}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

@@ -10,12 +10,14 @@ type DragNDropProps = {
   handleFile: (file: File) => void;
   type: "image" | "video" | "document";
   resetButton: boolean;
+  buttonClassName?: string;
 };
 
 const DragNDrop = ({
   className,
   handleFile,
   type,
+  buttonClassName,
   resetButton,
 }: DragNDropProps) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -180,6 +182,7 @@ const DragNDrop = ({
           </Label>
           {error && (
             <Button
+              className={cn("", buttonClassName)}
               variant="outline"
               onClick={() => {
                 setFile(null);

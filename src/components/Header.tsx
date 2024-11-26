@@ -4,8 +4,23 @@ import { ModeToggle } from "@/components/ModeToggle";
 import Image from "next/image";
 import snapUiBlack from "@/assets/snap-ui-black.svg";
 import Link from "next/link";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "./ui/button";
+import { PanelTopClose } from "lucide-react";
+import { docsConfig } from "@/config/docs-config";
+import { usePathname } from "next/navigation";
+import { ScrollArea } from "./ui/scroll-area";
 
 function Header() {
+  const pathname = usePathname();
   return (
     <header className="z-20 w-full sticky top-0 p-2 backdrop-blur bg-background/50">
       <nav className="hidden md:flex justify-between space-x-2">
@@ -24,6 +39,60 @@ function Header() {
           </div>
           <ModeToggle />
         </div>
+      </nav>
+      <nav className=" flex md:hidden justify-between">
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button variant="ghost" size="icon" className="my-auto">
+              <PanelTopClose />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle className="flex justify-center items-center">
+                <Image
+                  className="w-8 h-8 dark:invert mr-2"
+                  src={snapUiBlack}
+                  alt=""
+                />{" "}
+                Snap UI
+              </DrawerTitle>
+            </DrawerHeader>
+            <DrawerFooter>
+              <ScrollArea className="max-h-[40vh]">
+                <div className="flex flex-col justify-center py-2 gap-5 ">
+                  {docsConfig.map((section, _) => (
+                    <div
+                      key={section.title}
+                      className="flex justify-center flex-col gap-1  "
+                    >
+                      <h2 className="text-center">{section.title}</h2>
+                      <div className="flex flex-col justify-center space-y-2 w-full">
+                        {section.pages &&
+                          section.pages.map((page, _) => (
+                            <Link
+                              href={page?.path || "/"}
+                              key={page.title}
+                              className={`text-sm hover:underline text-center ${
+                                pathname === page?.path
+                                  ? "text-foreground underline"
+                                  : "text-muted-foreground"
+                              }`}
+                            >
+                              {page.title}
+                            </Link>
+                          ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+              <DrawerClose>
+                <Button variant="outline">Close</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       </nav>
     </header>
   );
