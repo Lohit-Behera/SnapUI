@@ -4,17 +4,17 @@ function Docs() {
   return (
     <div className="flex flex-col space-y-4 justify-center">
       <h1 className="text-lg md:text-2xl font-semibold">Introduction</h1>
-      <p className="w-full md:w-[400px] text-xs md:text-sm text-muted-foreground">
+      <p className="w-full md:max-w-[400px] text-xs md:text-sm text-muted-foreground">
         Beautifully designed components that you can copy and paste into your
-        apps. Accessible. Customizable. Open Source.
+        apps. Accessible. Customizable.
       </p>
-      <p className="w-full md:w-[500px] text-sm md:text-base">
+      <p className="w-full md:max-w-[500px] text-sm md:text-base">
         Welcome to my customizable and responsive component library, designed
         for React developers looking to elevate their UI effortlessly! This
-        library includes components styled with Tailwind CSS, ShadCN, and Framer
-        Motion, providing you with versatile, production-ready elements for any
-        project. Each component is optimized for performance, ensuring smooth,
-        interactive, and visually appealing experiences across all devices.
+        library includes components styled with Tailwind CSS, ShadCN, and
+        Motion, providing you with versatile elements for any project. Each
+        component is ensuring smooth, interactive, and visually appealing
+        experiences across all devices.
       </p>
       <h1 className="text-lg md:text-2xl font-semibold">Why This Library?</h1>
       <div className="flex flex-col space-y-2">
@@ -27,8 +27,8 @@ function Docs() {
           polished look and feel.
         </p>
         <p className="text-sm md:text-base">
-          <strong>Framer Motion</strong> animations to add life and
-          responsiveness to your UI with minimal setup.
+          <strong>Motion</strong> animations to add life and responsiveness to
+          your UI with minimal setup.
         </p>
       </div>
     </div>
