@@ -16,13 +16,18 @@ import {
 import { Button } from "./ui/button";
 import { PanelTopClose } from "lucide-react";
 import { docsConfig } from "@/config/docs-config";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ScrollArea } from "./ui/scroll-area";
 
 function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   return (
-    <header className="z-20 w-full sticky top-0 p-2 backdrop-blur bg-background/50">
+    <header
+      className={`z-20 w-full sticky top-0 p-2  ${
+        pathname === "/" ? "bg-transparent" : "backdrop-blur bg-background/50"
+      }`}
+    >
       <nav className="hidden md:flex justify-between space-x-2">
         <div className="w-full flex justify-between">
           <div className="flex items-center space-x-2">
@@ -70,17 +75,21 @@ function Header() {
                       <div className="flex flex-col justify-center space-y-2 w-full">
                         {section.pages &&
                           section.pages.map((page, _) => (
-                            <Link
-                              href={page?.path || "/"}
+                            <Button
                               key={page.title}
-                              className={`text-sm hover:underline text-center ${
+                              variant={
+                                pathname === page?.path ? "secondary" : "ghost"
+                              }
+                              onClick={() => router.push(page?.path || "/")}
+                              size="xs"
+                              className={`text-sm hover:bg-muted w-full justify-start font-normal ${
                                 pathname === page?.path
-                                  ? "text-foreground underline"
+                                  ? "text-foreground"
                                   : "text-muted-foreground"
                               }`}
                             >
                               {page.title}
-                            </Link>
+                            </Button>
                           ))}
                       </div>
                     </div>
