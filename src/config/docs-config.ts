@@ -23,6 +23,10 @@ export const docsConfig: DocsConfig[] = [
         title: "Introduction",
         path: "/docs/introduction",
       },
+      {
+        title: "Installation",
+        path: "/docs/installation",
+      },
     ],
   },
   {

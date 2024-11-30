@@ -46,23 +46,37 @@ export default function Home() {
   const router = useRouter();
   return (
     <div className="w-[98%] md:w-[70%] lg:w-[60%] mx-auto grid gap-8">
-      {textLines.map((line, index) => (
-        <motion.h1></motion.h1>
-      ))}
-      <AnimatedText lines={textLines} />
-      <AnimatedText
-        lines={subText}
-        className="text-muted-foreground text-lg md:text-xl lg:text-xl"
-        delay={0.2}
-      />
-      <motion.div
+      <div className="grid gap-0 md:gap-4">
+        {textLines.map((line, index) => (
+          <motion.h1
+            key={index}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.2 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-center"
+          >
+            {line}
+          </motion.h1>
+        ))}
+      </div>
+      <motion.p
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.6 }}
+        className="text-muted-foreground text-base md:text-lg text-center"
+      >
+        A modern and customizable UI library crafted with ShadCN, Tailwind CSS,
+        and Framer Motion., Accelerate your development with ease and style with
+        Snap Ui.
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.8 }}
         className="flex justify-center space-x-8"
       >
         <Button
-          className="relative group px-4 gap-0 hover:gap-2"
+          className="relative group px-4 gap-0 hover:gap-2 font-semibold"
           size="sm"
           onClick={() => router.push("/docs/introduction")}
         >

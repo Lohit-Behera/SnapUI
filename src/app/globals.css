@@ -76,3 +76,22 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Scroll Bar */
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  @apply bg-muted-foreground/60;
+  @apply hover:bg-muted-foreground/80;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+.react-syntax-highlighter {
+  overflow-x: hidden !important;
+  display: block;
+}
