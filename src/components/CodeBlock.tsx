@@ -1,6 +1,5 @@
-import SyntaxHighlighter from "react-syntax-highlighter";
-import anOldHope from "react-syntax-highlighter/dist/cjs/styles/hljs/an-old-hope";
-import vs from "react-syntax-highlighter/dist/cjs/styles/hljs/vs";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { useState } from "react";
@@ -11,14 +10,10 @@ const CodeBlockComponent = ({
   language,
   code,
   className,
-  showLineNumbers = false,
-  wrapLongLines = true,
 }: {
   language: string;
   code: string;
   className?: string;
-  showLineNumbers?: boolean;
-  wrapLongLines?: boolean;
 }) => {
   const theme = useTheme();
   const [copied, setCopied] = useState(false);
@@ -48,15 +43,18 @@ const CodeBlockComponent = ({
       </div>
       <SyntaxHighlighter
         language={language}
-        style={theme.theme === "dark" ? anOldHope : vs}
-        showLineNumbers={showLineNumbers}
+        style={vscDarkPlus}
         wrapLines={true}
-        wrapLongLines={wrapLongLines}
+        wrapLongLines={true}
         customStyle={{
           height: "100%",
           overflowX: "hidden",
           borderRadius: "0.5rem",
         }}
+        lineProps={{
+          style: { wordBreak: "break-all", whiteSpace: "pre-wrap" },
+        }}
+        className="text-sm md:text-base"
       >
         {code}
       </SyntaxHighlighter>

@@ -10,32 +10,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, Clipboard } from "lucide-react";
 import { useState } from "react";
 import CodeBlockComponent from "@/components/CodeBlock";
-
+import { Button } from "@/components/ui/button";
+import {
+  viteTsConfig,
+  tsAppConfig,
+  tsConfig,
+  utils,
+  viteConfig,
+} from "@/codes/installation";
 function page() {
   const [copied, setCopied] = useState(false);
-
-  const viteTsConfig = `{
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}`;
   return (
     <div className="grid gap-6">
       <h1 className="text-lg md:text-2xl font-semibold">Installation</h1>
       <div className="grid gap-2">
-        <h1 className="text-base md:text-lg font-semibold">Add Tailwind CSS</h1>
+        <h3 className="text-base md:text-lg font-semibold">Add Tailwind CSS</h3>
         <p className="text-sm md:text-base">
           Components are styled using Tailwind CSS. You need to install Tailwind
           CSS in your project.
@@ -116,9 +105,9 @@ function page() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="vite" className="grid gap-2">
-            <h1 className="text-base md:text-lg font-semibold">
+            <h3 className="text-base md:text-lg font-semibold">
               Edit tsconfig.json file
-            </h1>
+            </h3>
             <p className="text-sm md:text-base">
               The current version of Vite splits TypeScript configuration into
               three files, two of which need to be edited. Add the{" "}
@@ -147,12 +136,87 @@ function page() {
               language="json"
               code={viteTsConfig}
               className=""
-              wrapLongLines={false}
-              showLineNumbers={true}
+            />
+            <h3
+              className="text-base md:text-lg font-semibold"
+              id="tsconfig-app"
+            >
+              Edit tsconfig.app.json file
+            </h3>
+            <p className="text-sm md:text-base">
+              Add the following code to the{" "}
+              <span className="font-mono p-0.5 md:p-1 rounded-md bg-muted">
+                tsconfig.app.json
+              </span>{" "}
+              file to resolve paths, for your IDE:
+            </p>
+            <CodeBlockComponent
+              language="json"
+              code={tsAppConfig}
+              className=""
+            />
+            <h3 className="text-base md:text-lg font-semibold">
+              Update vite.config.ts
+            </h3>
+            <p className="text-sm md:text-base">
+              Add the following code to the vite.config.ts so your app can
+              resolve paths without error
+            </p>
+            <div className="grid gap-2 bg-muted rounded-md p-4 relative">
+              <p className="font-mono text-sm md:text-base">
+                <span className="text-sky-700 dark:text-sky-300">npm</span>{" "}
+                <span className="text-violet-700 dark:text-violet-300 ">
+                  i -D @types/node
+                </span>
+              </p>
+              <div className="absolute inset-y-0 right-4 flex items-center">
+                <Button
+                  variant="secondary"
+                  className=""
+                  size="icon"
+                  onClick={() => {
+                    navigator.clipboard.writeText("npm i -D @types/node");
+                    setCopied(true);
+                    setTimeout(() => {
+                      setCopied(false);
+                    }, 2000);
+                  }}
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Clipboard className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+            <CodeBlockComponent
+              language="typescript"
+              code={viteConfig}
+              className=""
             />
           </TabsContent>
-          <TabsContent value="react">Change your password here.</TabsContent>
+          <TabsContent value="react" className="grid gap-2">
+            <h3 className="text-base md:text-lg font-semibold">
+              Edit tsconfig.json file
+            </h3>
+            <p className="text-sm md:text-base">
+              Configure the path aliases in your{" "}
+              <span className="font-mono p-0.5 md:p-1 rounded-md bg-muted">
+                tsconfig.json
+              </span>{" "}
+              file.
+            </p>
+            <CodeBlockComponent language="json" code={tsConfig} className="" />
+          </TabsContent>
         </Tabs>
+        <h3 className="text-base md:text-lg font-semibold">Add Tailwind CSS</h3>
+        <p className="text-sm md:text-base">lib/utils.ts</p>
+        <CodeBlockComponent language="typescript" code={utils} className="" />
+        <h3 className="text-base md:text-lg font-semibold">That's it</h3>
+        <p className="text-sm md:text-base">
+          You can now start adding components to your project.
+        </p>
       </div>
     </div>
   );

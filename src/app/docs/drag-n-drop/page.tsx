@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import PreviewCode from "@/components/PreviewCode";
 
 function DragNDropComponent() {
   const handleOnDrop = (file: File) => {
@@ -99,67 +100,40 @@ function DragNDropComponent() {
           <h1 className="text-base md:text-lg font-semibold">Usage</h1>
           {/* Image */}
           <h1 className="text-base md:text-lg">Use with Image</h1>
-          <Tabs defaultValue="preview">
-            <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-            <TabsContent value="preview">
+          <PreviewCode
+            code={dragNDropCode("image")}
+            preview={
               <DragNDropShadCn
                 type="image"
                 handleFile={handleOnDrop}
                 resetButton
               />
-            </TabsContent>
-            <TabsContent value="code">
-              <CodeBlockComponent
-                language="jsx"
-                code={dragNDropCode("image")}
-              />
-            </TabsContent>
-          </Tabs>
+            }
+          />
           {/* Video */}
           <h1 className="text-base md:text-lg">Use with Video</h1>
-          <Tabs defaultValue="preview">
-            <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-            <TabsContent value="preview">
+          <PreviewCode
+            code={dragNDropCode("video")}
+            preview={
               <DragNDropShadCn
                 type="video"
                 handleFile={handleOnDrop}
                 resetButton
               />
-            </TabsContent>
-            <TabsContent value="code">
-              <CodeBlockComponent
-                language="jsx"
-                code={dragNDropCode("video")}
-              />
-            </TabsContent>
-          </Tabs>
+            }
+          />
           {/* Document */}
           <h1 className="text-base md:text-lg">Use with Document</h1>
-          <Tabs defaultValue="preview">
-            <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-            <TabsContent value="preview">
+          <PreviewCode
+            code={dragNDropCode("document")}
+            preview={
               <DragNDropShadCn
                 type="document"
                 handleFile={handleOnDrop}
                 resetButton
               />
-            </TabsContent>
-            <TabsContent value="code">
-              <CodeBlockComponent
-                language="jsx"
-                code={dragNDropCode("document")}
-              />
-            </TabsContent>
-          </Tabs>
+            }
+          />
           <h1 className="text-base md:text-lg font-semibold">Code</h1>
           <CodeBlockWrapper>
             <CodeBlockComponent language="jsx" code={dragNDropShadCnCode} />
@@ -170,67 +144,40 @@ function DragNDropComponent() {
           <h1 className="text-base md:text-lg font-semibold">Usage</h1>
           {/* Image */}
           <h1 className="text-base md:text-lg">Use with Image</h1>
-          <Tabs defaultValue="preview">
-            <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-            <TabsContent value="preview">
+          <PreviewCode
+            code={dragNDropCode("image")}
+            preview={
               <DragNDropTailwind
                 type="image"
                 handleFile={handleOnDrop}
                 resetButton
               />
-            </TabsContent>
-            <TabsContent value="code">
-              <CodeBlockComponent
-                language="jsx"
-                code={dragNDropCode("image")}
-              />
-            </TabsContent>
-          </Tabs>
+            }
+          />
           {/* Video */}
           <h1 className="text-base md:text-lg">Use with Video</h1>
-          <Tabs defaultValue="preview">
-            <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-            <TabsContent value="preview">
+          <PreviewCode
+            code={dragNDropCode("video")}
+            preview={
               <DragNDropTailwind
                 type="video"
                 handleFile={handleOnDrop}
                 resetButton
               />
-            </TabsContent>
-            <TabsContent value="code">
-              <CodeBlockComponent
-                language="jsx"
-                code={dragNDropCode("video")}
-              />
-            </TabsContent>
-          </Tabs>
+            }
+          />
           {/* Document */}
           <h1 className="text-base md:text-lg">Use with Document</h1>
-          <Tabs defaultValue="preview">
-            <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-            <TabsContent value="preview">
+          <PreviewCode
+            code={dragNDropCode("document")}
+            preview={
               <DragNDropTailwind
                 type="document"
                 handleFile={handleOnDrop}
                 resetButton
               />
-            </TabsContent>
-            <TabsContent value="code">
-              <CodeBlockComponent
-                language="jsx"
-                code={dragNDropCode("document")}
-              />
-            </TabsContent>
-          </Tabs>
+            }
+          />
           <h1 className="text-base md:text-lg font-semibold">Code</h1>
           <CodeBlockWrapper>
             <CodeBlockComponent language="jsx" code={dragNDropTailwindCode} />

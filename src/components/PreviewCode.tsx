@@ -1,11 +1,19 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CodeBlockComponent from "./CodeBlock";
 
 interface PreviewCodeProps {
   preview: React.ReactNode;
-  code: React.ReactNode;
+  code: string;
+  language?: string;
+  codeClassName?: string;
 }
-function PreviewCode({ preview, code }: PreviewCodeProps) {
+function PreviewCode({
+  preview,
+  code,
+  language = "tsx",
+  codeClassName,
+}: PreviewCodeProps) {
   return (
     <Tabs defaultValue="preview">
       <TabsList>
@@ -13,7 +21,13 @@ function PreviewCode({ preview, code }: PreviewCodeProps) {
         <TabsTrigger value="code">Code</TabsTrigger>
       </TabsList>
       <TabsContent value="preview">{preview}</TabsContent>
-      <TabsContent value="code">{code}</TabsContent>
+      <TabsContent value="code">
+        <CodeBlockComponent
+          language={language}
+          code={code}
+          className={codeClassName}
+        />
+      </TabsContent>
     </Tabs>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import PasswordInputShadCn from "@/components/ui/shadcn/password-input";
 import PasswordInputTailwind from "@/components/ui/tailwind/password-input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,13 +15,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import PreviewCode from "@/components/PreviewCode";
 
 function PasswordInputComponent() {
-  const [show, setShow] = useState("preview");
-
-  const shadCnCode = `"use client";
-
-import { useState, forwardRef } from "react";
+  const shadCnCode = `import { useState, forwardRef } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -61,9 +57,7 @@ const PasswordInput = forwardRef<
 export default PasswordInput;
 `;
 
-  const tailwindCode = `"use client";
-
-import { useState, forwardRef } from "react";
+  const tailwindCode = `import { useState, forwardRef } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -179,89 +173,39 @@ export default PasswordInputDemo;`;
         {/* ShadCn */}
         <TabsContent className="grid gap-4" value="shadcn">
           <h1 className="text-base md:text-lg font-semibold">Usage</h1>
-          <div className="flex space-x-2">
-            <span
-              className={` hover:underline cursor-pointer ${
-                show === "preview"
-                  ? "text-foreground underline"
-                  : "text-muted-foreground"
-              }`}
-              onClick={() => setShow("preview")}
-            >
-              Preview
-            </span>
-            <span
-              className={` hover:underline cursor-pointer ${
-                show === "code"
-                  ? "text-foreground underline"
-                  : "text-muted-foreground"
-              }`}
-              onClick={() => setShow("code")}
-            >
-              Code
-            </span>
-          </div>
-          {show === "preview" && (
-            <div className="flex items-center w-full p-2 md:p-4 min-h-96 border rounded-lg">
-              <div className="w-full md:w-[70%] lg:w-[50%] mx-auto grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <PasswordInputShadCn placeholder="Password" id="password" />
+          <PreviewCode
+            code={PasswordInputShadCnUsage}
+            preview={
+              <div className="flex items-center w-full p-2 md:p-4 min-h-96 border rounded-lg">
+                <div className="w-full md:w-[70%] lg:w-[50%] mx-auto grid gap-2">
+                  <Label htmlFor="password">Password</Label>
+                  <PasswordInputShadCn placeholder="Password" id="password" />
+                </div>
               </div>
-            </div>
-          )}
-          {show === "code" && (
-            <CodeBlockComponent
-              language="jsx"
-              code={PasswordInputShadCnUsage}
-            />
-          )}
+            }
+          />
           <h1 className="text-base md:text-lg font-semibold">Code</h1>
           <CodeBlockComponent language="jsx" code={shadCnCode} />
         </TabsContent>
         {/* TailWind CSS */}
         <TabsContent className="grid gap-4" value="tailwind">
           <h1 className="text-base md:text-lg font-semibold">Usage</h1>
-          <div className="flex space-x-2">
-            <span
-              className={` hover:underline cursor-pointer ${
-                show === "preview"
-                  ? "text-foreground underline"
-                  : "text-muted-foreground"
-              }`}
-              onClick={() => setShow("preview")}
-            >
-              Preview
-            </span>
-            <span
-              className={` hover:underline cursor-pointer ${
-                show === "code"
-                  ? "text-foreground underline"
-                  : "text-muted-foreground"
-              }`}
-              onClick={() => setShow("code")}
-            >
-              Code
-            </span>
-          </div>
-          {show === "preview" && (
-            <div className="flex items-center w-full p-2 md:p-4 min-h-96 border rounded-lg">
-              <div className="w-full md:w-[70%] lg:w-[50%] mx-auto grid gap-2">
-                <label
-                  className="text-sm font-medium leading-none"
-                  htmlFor="password"
-                >
-                  Password
-                </label>
-                <PasswordInputTailwind placeholder="Password" id="password" />
+          <PreviewCode
+            code={PasswordInputTailwindUsage}
+            preview={
+              <div className="flex items-center w-full p-2 md:p-4 min-h-96 border rounded-lg">
+                <div className="w-full md:w-[70%] lg:w-[50%] mx-auto grid gap-2">
+                  <label
+                    className="text-sm font-medium leading-none"
+                    htmlFor="password"
+                  >
+                    Password
+                  </label>
+                  <PasswordInputTailwind placeholder="Password" id="password" />
+                </div>
               </div>
-            </div>
-          )}
-          {show === "code" && (
-            <CodeBlockComponent
-              language="jsx"
-              code={PasswordInputTailwindUsage}
-            />
-          )}
+            }
+          />
           <h1 className="text-base md:text-lg font-semibold">Code</h1>
           <CodeBlockComponent language="jsx" code={tailwindCode} />
         </TabsContent>

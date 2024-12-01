@@ -90,8 +90,3 @@ body {
 ::-webkit-scrollbar {
   width: 10px;
 }
-
-.react-syntax-highlighter {
-  overflow-x: hidden !important;
-  display: block;
-}

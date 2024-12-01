@@ -25,6 +25,7 @@ import {
   tapHoverCapsuleButtonMotion,
 } from "@/codes/motion/buttton";
 import PreviewCode from "@/components/PreviewCode";
+import InstallModuleCode from "@/components/InstallModuleCode";
 
 const buttonVariants = [
   {
@@ -234,18 +235,13 @@ function ButtonComponent() {
               <div key={index} className="grid gap-4">
                 <h3 className="text-base md:text-lg font-semibold">{title}</h3>
                 <PreviewCode
+                  codeClassName="h-72"
                   preview={
                     <div className="h-72 w-full rounded-md bg-muted flex justify-center items-center">
                       {preview}
                     </div>
                   }
-                  code={
-                    <CodeBlockComponent
-                      language="tsx"
-                      code={code}
-                      className="h-72"
-                    />
-                  }
+                  code={code}
                 />
               </div>
             ))}
@@ -257,41 +253,35 @@ function ButtonComponent() {
               <div key={index} className="grid gap-4 ">
                 <h3 className="text-base md:text-lg font-semibold">{title}</h3>
                 <PreviewCode
+                  codeClassName="h-72"
                   preview={
                     <div className="h-72 w-full rounded-md bg-muted flex justify-center items-center">
                       {preview}
                     </div>
                   }
-                  code={
-                    <CodeBlockComponent
-                      language="tsx"
-                      code={code}
-                      className="h-72"
-                    />
-                  }
+                  code={code}
                 />
               </div>
             ))}
           </div>
         </TabsContent>
-        <TabsContent value="motion">
+        <TabsContent value="motion" className="grid gap-4">
+          <p className="text-sm md:text-base">
+            To use motion, you need to install motion in your project.
+          </p>
+          <InstallModuleCode modules="motion" />
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
             {motionVariants.map(({ title, preview, code }, index) => (
               <div key={index} className="grid gap-4 ">
                 <h3 className="text-base md:text-lg font-semibold">{title}</h3>
                 <PreviewCode
+                  codeClassName="h-72"
                   preview={
                     <div className="h-72 w-full rounded-md bg-muted flex justify-center items-center">
                       {preview}
                     </div>
                   }
-                  code={
-                    <CodeBlockComponent
-                      language="tsx"
-                      code={code}
-                      className="h-72"
-                    />
-                  }
+                  code={code}
                 />
               </div>
             ))}
