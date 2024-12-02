@@ -18,6 +18,7 @@ import {
   utils,
   viteConfig,
 } from "@/codes/installation";
+import InstallModuleCode from "@/components/InstallModuleCode";
 function page() {
   const [copied, setCopied] = useState(false);
   return (
@@ -42,54 +43,10 @@ function page() {
         <p className="text-sm md:text-base">
           Add the following dependencies to your project:
         </p>
-        <div className="grid gap-2 bg-muted rounded-md p-4 relative">
-          <p className="font-mono text-sm md:text-base">
-            <span className="text-sky-700 dark:text-sky-300">npm</span>{" "}
-            <span className="text-violet-700 dark:text-violet-300 ">
-              install tailwindcss-animate class-variance-authority clsx
-              tailwind-merge lucide-react
-            </span>
-          </p>
-          <div className="absolute inset-y-0 right-4 flex items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="p-1">
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Clipboard className="h-4 w-4" />
-                )}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      "npm install tailwindcss-animate class-variance-authority clsx tailwind-merge lucide-react"
-                    );
-                    setCopied(true);
-                    setTimeout(() => {
-                      setCopied(false);
-                    }, 2000);
-                  }}
-                >
-                  npm
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      "yarn add tailwindcss-animate class-variance-authority clsx tailwind-merge lucide-react"
-                    );
-                    setCopied(true);
-                    setTimeout(() => {
-                      setCopied(false);
-                    }, 2000);
-                  }}
-                >
-                  yarn
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
+        <InstallModuleCode
+          modules="class-variance-authority clsx
+              tailwind-merge lucide-react"
+        />
       </div>
       <div className="gird gap-4">
         <h1 className="text-base md:text-lg font-semibold">

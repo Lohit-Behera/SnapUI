@@ -479,7 +479,7 @@ function VideoPlayer({
             }}
             animate={state.isHovering ? "visible" : "hidden"}
             transition={{ opacity: { duration: 0.3 } }}
-            className={`w-full h-[30%] absolute bottom-0 left-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-10 ${
+            className={`w-full h-[20%] absolute bottom-0 left-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none z-10 ${
               state.isFullScreen ? "rounded-none" : "rounded-lg"
             }`}
           ></motion.span>
@@ -564,20 +564,28 @@ function VideoPlayer({
                 <div className="flex">
                   <span className="p-1">
                     {state.isPlaying ? (
-                      <Pause
-                        className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                        strokeWidth={1}
-                        fill="#fff"
-                        color="#ffffff"
-                        onClick={togglePlay}
-                      />
+                      <div className="group relative" onClick={togglePlay}>
+                        <Pause
+                          className="w-4 md:w-6 h-4 md:h-6 group-hover:cursor-pointer"
+                          strokeWidth={1}
+                          fill="#fff"
+                          color="#ffffff"
+                        />
+                        <span className="absolute -top-14 bg-zinc-900 p-2 hidden group-hover:block rounded-md text-xs">
+                          Pause(space)
+                        </span>
+                      </div>
                     ) : (
-                      <Play
-                        className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                        fill="#fff"
-                        color="#ffffff"
-                        onClick={togglePlay}
-                      />
+                      <div className="group relative" onClick={togglePlay}>
+                        <Play
+                          className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                          fill="#fff"
+                          color="#ffffff"
+                        />
+                        <span className="absolute -top-14 bg-zinc-900 p-2 hidden group-hover:block rounded-md text-xs">
+                          Play(space)
+                        </span>
+                      </div>
                     )}
                   </span>
                   <span className="text-sm md:text-base my-auto mx-2">
@@ -587,8 +595,8 @@ function VideoPlayer({
                     / {formatTime(state.durationSec ? state.durationSec : 0)}
                   </span>
                   <span className="p-1">
-                    <CornerUpLeft
-                      className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                    <div
+                      className="group relative"
                       onClick={() => {
                         if (state.currentTimeSec > 5) {
                           handleSetTime(state.currentTimeSec - 5);
@@ -599,11 +607,16 @@ function VideoPlayer({
                           );
                         }
                       }}
-                    />
+                    >
+                      <CornerUpLeft className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer" />
+                      <span className="absolute -top-14 -right-6 bg-zinc-900 p-2 hidden group-hover:block rounded-md text-xs">
+                        Rewind(5s)
+                      </span>
+                    </div>
                   </span>
                   <span className="p-1">
-                    <CornerUpRight
-                      className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
+                    <div
+                      className="group relative"
                       onClick={() => {
                         if (
                           state.durationSec &&
@@ -617,33 +630,46 @@ function VideoPlayer({
                           );
                         }
                       }}
-                    />
+                    >
+                      <CornerUpRight className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer" />
+                      <span className="absolute -top-14 -right-6 bg-zinc-900 p-2 hidden group-hover:block rounded-md text-xs">
+                        Forward(5s)
+                      </span>
+                    </div>
                   </span>
                   <span className="p-1">
                     {state.isMuted ? (
-                      <VolumeX
-                        className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                        onClick={toggleMute}
-                      />
+                      <div className="group relative" onClick={toggleMute}>
+                        <VolumeX className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer" />
+                        <span className="absolute -top-14 -right-4 bg-zinc-900 p-2 hidden group-hover:block rounded-md text-xs">
+                          Unmute(m)
+                        </span>
+                      </div>
                     ) : (
-                      <Volume2
-                        className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                        onClick={toggleMute}
-                      />
+                      <div className="group relative" onClick={toggleMute}>
+                        <Volume2 className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer" />
+                        <span className="absolute -top-14 -right-4 bg-zinc-900 p-2 hidden group-hover:block rounded-md text-xs">
+                          Mute(m)
+                        </span>
+                      </div>
                     )}
                   </span>
                 </div>
                 <div className="mr-2 p-1">
                   {state.isFullScreen ? (
-                    <Minimize2
-                      className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                      onClick={toggleFullscreen}
-                    />
+                    <div className="group relative" onClick={toggleFullscreen}>
+                      <Minimize2 className="w-4 md:w-6 h-4 md:h-6 group-hover:cursor-pointer" />
+                      <span className="absolute -top-14 right-0 bg-zinc-900 p-2 hidden group-hover:block rounded-md text-xs">
+                        Minimize(f)
+                      </span>
+                    </div>
                   ) : (
-                    <Maximize2
-                      className="w-4 md:w-6 h-4 md:h-6 hover:cursor-pointer"
-                      onClick={toggleFullscreen}
-                    />
+                    <div className="group relative" onClick={toggleFullscreen}>
+                      <Maximize2 className="w-4 md:w-6 h-4 md:h-6 group-hover:cursor-pointer" />
+                      <span className="absolute -top-14 right-0 bg-zinc-900 p-2 hidden group-hover:block rounded-md text-xs">
+                        Maximize(f)
+                      </span>
+                    </div>
                   )}
                 </div>
               </div>
