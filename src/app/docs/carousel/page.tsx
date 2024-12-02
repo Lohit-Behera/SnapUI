@@ -2,6 +2,7 @@
 
 import CarouselMotion from "@/components/ui/shadcn/carousel-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CarouselMotionTailwind from "@/components/ui/tailwind/carousel-motion";
 const shadCnCarouselData = [
   {
     title: "Nature",
@@ -67,6 +68,7 @@ function page() {
         {/* Tailwind */}
         <TabsContent value="tailwind" className="grid gap-4">
           <h3>Usage</h3>
+          <CarouselMotionTailwind data={shadCnCarouselData} />
         </TabsContent>
       </Tabs>
     </div>
