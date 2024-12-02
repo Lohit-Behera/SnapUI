@@ -37,6 +37,10 @@ export const docsConfig: DocsConfig[] = [
         path: "/docs/buttons",
       },
       {
+        title: "Carousel",
+        path: "/docs/carousel",
+      },
+      {
         title: "Drag and drop",
         path: "/docs/drag-n-drop",
       },
