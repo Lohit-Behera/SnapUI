@@ -83,7 +83,7 @@ function CarouselMotionTailwind({
   };
 
   return (
-    <div className="w-full min-h-[60vh] mx-auto relative overflow-hidden">
+    <div className="w-full min-h-[50vh] md:min-h-[70vh] mx-auto relative overflow-hidden">
       <AnimatePresence
         initial={false}
         custom={direction}
@@ -186,7 +186,7 @@ function CarouselMotionTailwind({
             src={data[currentIndex].largeImage}
             alt={data[currentIndex].largeImageAlt}
             className={cn(
-              "w-full h-auto min-h-[60vh] object-cover rounded-md",
+              "w-full h-auto min-h-[50vh] md:min-h-[70vh] object-cover rounded-md",
               largeImageClassName
             )}
           />

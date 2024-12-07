@@ -3,7 +3,8 @@
 import CarouselMotion from "@/components/ui/shadcn/carousel-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CarouselMotionTailwind from "@/components/ui/tailwind/carousel-motion";
-const shadCnCarouselData = [
+
+const carouselData = [
   {
     title: "Nature",
     description: "Explore the beauty of nature",
@@ -63,12 +64,12 @@ function page() {
         {/* ShadCn */}
         <TabsContent value="shadcn" className="grid gap-4">
           <h3 className="text-sm md:text-base font-bold">Usage</h3>
-          <CarouselMotion data={shadCnCarouselData} />
+          <CarouselMotion data={carouselData} />
         </TabsContent>
         {/* Tailwind */}
         <TabsContent value="tailwind" className="grid gap-4">
-          <h3>Usage</h3>
-          <CarouselMotionTailwind data={shadCnCarouselData} />
+          <h3 className="text-sm md:text-base font-bold">Usage</h3>
+          <CarouselMotionTailwind data={carouselData} />
         </TabsContent>
       </Tabs>
     </div>

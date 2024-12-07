@@ -120,7 +120,7 @@ const tailwindVariants = [
     title: "Capsule",
     preview: (
       <button
-        className="relative inline-flex items-center justify-center gap-2 px-4 py-2 text-sm text-zinc-100 dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-50 hover:bg-zinc-700 dark:hover:bg-zinc-300 disabled:bg-zinc-400 dark:disabled:bg-zinc-400 disabled:cursor-not-allowed rounded-full duration-200"
+        className="relative inline-flex items-center justify-center gap-2 px-4 py-2 text-sm text-zinc-100 dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-50 hover:bg-zinc-700 dark:hover:bg-zinc-300 disabled:bg-zinc-400 dark:disabled:bg-zinc-400 disabled:cursor-progress rounded-full duration-200"
         onClick={() => toast.info("Button Clicked")}
       >
         Button
@@ -132,7 +132,7 @@ const tailwindVariants = [
     title: "Loading",
     preview: (
       <button
-        className="inline-flex items-center justify-center gap-0.5 px-4 py-2 text-sm text-zinc-100 dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-50 hover:bg-zinc-700 dark:hover:bg-zinc-300 disabled:bg-zinc-400 dark:disabled:bg-zinc-400 disabled:cursor-not-allowed rounded-md duration-200"
+        className="inline-flex items-center justify-center gap-0.5 px-4 py-2 text-sm text-zinc-100 dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-50 hover:bg-zinc-700 dark:hover:bg-zinc-300 disabled:bg-zinc-400 dark:disabled:bg-zinc-400 disabled:cursor-progress rounded-md duration-200"
         disabled
       >
         <Loader2 className="w-4 h-4 mr-1 my-auto animate-spin" />
