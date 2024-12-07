@@ -7,11 +7,11 @@ import { Check, Clipboard } from "lucide-react";
 import { Button } from "./ui/button";
 
 const CodeBlockComponent = ({
-  language,
+  language = "tsx",
   code,
   className,
 }: {
-  language: string;
+  language?: string;
   code: string;
   className?: string;
 }) => {

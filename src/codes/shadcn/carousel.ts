@@ -1,4 +1,4 @@
-import {
+export const carouselShadCn = `import {
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -42,7 +42,7 @@ function CarouselMotion({
   return (
     <Carousel
       className={cn(
-        `w-full h-full min-h-[50vh] md:min-h-[70vh] mx-auto relative `,
+        "w-full h-full min-h-[50vh] md:min-h-[70vh] mx-auto relative",
         containerClassName
       )}
     >
@@ -141,3 +141,4 @@ function CarouselMotion({
 }
 
 export default CarouselMotion;
+`;

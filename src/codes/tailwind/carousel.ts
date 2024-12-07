@@ -1,4 +1,4 @@
-import { useState } from "react";
+export const carouselTailwind = `import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -85,7 +85,7 @@ function CarouselMotion({
   return (
     <div
       className={cn(
-        "w-full min-h-[50vh] md:min-h-[80vh] mx-auto relative overflow-hidden rounded-md",
+        "w-full min-h-[50vh] md:min-h-[70vh] mx-auto relative overflow-hidden rounded-md",
         containerClassName
       )}
     >
@@ -191,7 +191,7 @@ function CarouselMotion({
             src={data[currentIndex].largeImage}
             alt={data[currentIndex].largeImageAlt}
             className={cn(
-              "w-full h-auto min-h-[50vh] md:min-h-[80vh] object-cover rounded-md",
+              "w-full h-auto min-h-[50vh] md:min-h-[70vh] object-cover rounded-md",
               largeImageClassName
             )}
           />
@@ -213,4 +213,4 @@ function CarouselMotion({
   );
 }
 
-export default CarouselMotion;
+export default CarouselMotion;`;

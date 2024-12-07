@@ -121,7 +121,6 @@ function page() {
           <CodeBlockComponent language="tsx" code={VideoPlayerCode} />
         </TabsContent>
       </Tabs>
-
       <h1 className="text-base md:text-lg font-semibold">Code</h1>
       <CodeBlockWrapper>
         <CodeBlockComponent language="tsx" code={videoPlayerCode} />
