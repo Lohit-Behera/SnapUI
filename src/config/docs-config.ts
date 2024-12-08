@@ -45,6 +45,10 @@ export const docsConfig: DocsConfig[] = [
         path: "/docs/drag-n-drop",
       },
       {
+        title: "Image",
+        path: "/docs/image",
+      },
+      {
         title: "Password input",
         path: "/docs/password-input",
       },
