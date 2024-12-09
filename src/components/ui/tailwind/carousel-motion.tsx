@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ImageLoader from "../image-loader";
 
 type data = {
   className?: string;
@@ -121,7 +122,7 @@ function CarouselMotion({
         >
           <div
             className={cn(
-              "absolute left-5 md:left-10 lg:left-20 top-5 md:top-10 lg:top-20 z-10 space-y-1 md:space-y-4",
+              "absolute left-5 md:left-10 lg:left-20 top-5 md:top-10 lg:top-20 z-20 space-y-1 md:space-y-4",
               textContainerClassName
             )}
           >
@@ -173,7 +174,7 @@ function CarouselMotion({
               delay: 0.6,
             }}
             className={cn(
-              "absolute bottom-6 md:bottom-10 lg:bottom-20 right-10 lg:right-20 z-10",
+              "absolute bottom-6 md:bottom-10 lg:bottom-20 right-10 lg:right-20 z-20",
               smallImageContainerClassName
             )}
           >
@@ -186,11 +187,11 @@ function CarouselMotion({
               )}
             />
           </motion.div>
-          <span className="absolute w-full h-full top-0 left-0 bg-black/50 rounded-md"></span>
-          <img
+          <span className="absolute w-full h-full top-0 left-0 bg-black/50 rounded-md z-10"></span>
+          <ImageLoader
             src={data[currentIndex].largeImage}
             alt={data[currentIndex].largeImageAlt}
-            className={cn(
+            containerClassName={cn(
               "w-full h-auto min-h-[50vh] md:min-h-[80vh] object-cover rounded-md",
               largeImageClassName
             )}

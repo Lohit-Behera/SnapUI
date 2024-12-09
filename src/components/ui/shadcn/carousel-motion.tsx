@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
+import ImageLoader from "../image-loader";
 
 type data = {
   className?: string;
@@ -54,7 +55,7 @@ function CarouselMotion({
           >
             <div
               className={cn(
-                "absolute left-5 md:left-10 lg:left-20 top-5 md:top-10 lg:top-20 z-20 space-y-1 md:space-y-4",
+                "absolute left-5 md:left-10 lg:left-20 top-5 md:top-10 lg:top-20 z-20 space-y-1 md:space-y-4 z-20",
                 textContainerClassName
               )}
             >
@@ -90,7 +91,7 @@ function CarouselMotion({
                   delay: 0.6,
                 }}
                 className={cn(
-                  "w-[70%] text-base sm:text-lg md:text-3xl lg:text-5xl font-bold text-white",
+                  "w-[70%] text-xl md:text-3xl lg:text-5xl font-bold text-white",
                   descriptionClassName
                 )}
               >
@@ -106,10 +107,11 @@ function CarouselMotion({
               }}
               transition={{
                 duration: 0.5,
+                ease: [0.12, 0.8, 0.17, 0.89],
                 delay: 0.6,
               }}
               className={cn(
-                "absolute bottom-6 md:bottom-10 lg:bottom-20 right-10 lg:right-20 z-10",
+                "absolute bottom-6 md:bottom-10 lg:bottom-20 right-10 lg:right-20 z-20",
                 smallImageContainerClassName
               )}
             >
@@ -117,17 +119,17 @@ function CarouselMotion({
                 src={item.smallImage}
                 alt={item.smallImageAlt}
                 className={cn(
-                  "w-full h-20 md:h-40 lg:h-48 object-cover rounded-lg",
+                  "w-full h-28 md:h-40 lg:h-48 object-cover rounded-lg",
                   smallImageClassName
                 )}
               />
             </motion.div>
-            <span className="absolute w-full h-full top-0 left-0 bg-black/50 rounded-md"></span>
-            <img
+            <span className="absolute w-full h-full top-0 left-0 bg-black/50 rounded-md z-10"></span>
+            <ImageLoader
               src={item.largeImage}
               alt={item.largeImageAlt}
-              className={cn(
-                "w-full h-full object-cover rounded-md",
+              containerClassName={cn(
+                "w-full h-full min-h-[50vh] md:min-h-[70vh] object-cover rounded-md",
                 largeImageClassName
               )}
             />
