@@ -77,16 +77,16 @@ body {
   }
 }
 
-/* Scroll Bar */
-::-webkit-scrollbar-track {
+/* Scroll Bar Style for Code Block */
+.code-block-scrollbar::-webkit-scrollbar-track {
   @apply bg-muted;
 }
-::-webkit-scrollbar-thumb {
+.code-block-scrollbar::-webkit-scrollbar-thumb {
   border-radius: 10px;
   @apply bg-muted-foreground/60;
   @apply hover:bg-muted-foreground/80;
 }
 
-::-webkit-scrollbar {
+.code-block-scrollbar::-webkit-scrollbar {
   width: 10px;
 }

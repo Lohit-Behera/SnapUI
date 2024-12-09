@@ -64,17 +64,17 @@ function Header() {
               </DrawerTitle>
             </DrawerHeader>
             <DrawerFooter>
-              <ScrollArea className="max-h-[40vh]">
-                <div className="flex flex-col justify-center py-2 gap-5 ">
-                  {docsConfig.map((section, _) => (
+              <ScrollArea className="max-h-[40vh] overflow-y-scroll">
+                <div className="flex flex-col justify-center py-2 gap-5">
+                  {docsConfig.map((section) => (
                     <div
                       key={section.title}
-                      className="flex justify-center flex-col gap-1  "
+                      className="flex justify-center flex-col gap-1 "
                     >
                       <h2 className="text-center">{section.title}</h2>
                       <div className="flex flex-col justify-center space-y-2 w-full">
                         {section.pages &&
-                          section.pages.map((page, _) => (
+                          section.pages.map((page) => (
                             <Button
                               key={page.title}
                               variant={

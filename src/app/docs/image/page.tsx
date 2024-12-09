@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -76,7 +75,7 @@ function page() {
       preview: (
         <ImageLoader
           customError={
-            <div className="w-full h-0 pb-[56.25%] relative">
+            <div className="w-full h-96 pb-[20%] relative">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 910 648"
@@ -183,7 +182,7 @@ function page() {
       <p className="text-sm md:text-base text-muted-foreground">Image loader</p>
       {imageVariants.map(({ title, preview, code }, index) => (
         <div key={index} className="grid gap-4">
-          <h3 className="text-base md:text-lg font-semibolds">{title}</h3>
+          <h3 className="text-base md:text-lg font-semibold">{title}</h3>
           <PreviewCode codeClassName="h-[50vh]" preview={preview} code={code} />
         </div>
       ))}
@@ -193,7 +192,6 @@ function page() {
       </CodeBlockWrapper>
       <h1 className="text-base md:text-lg font-semibold">Props</h1>
       <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Prop</TableHead>
