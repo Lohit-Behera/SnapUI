@@ -75,21 +75,24 @@ function Header() {
                       <div className="flex flex-col justify-center space-y-2 w-full">
                         {section.pages &&
                           section.pages.map((page) => (
-                            <Button
-                              key={page.title}
-                              variant={
-                                pathname === page?.path ? "secondary" : "ghost"
-                              }
-                              onClick={() => router.push(page?.path || "/")}
-                              size="xs"
-                              className={`text-sm hover:bg-muted w-full justify-start font-normal ${
-                                pathname === page?.path
-                                  ? "text-foreground"
-                                  : "text-muted-foreground"
-                              }`}
-                            >
-                              {page.title}
-                            </Button>
+                            <DrawerClose asChild key={page.title}>
+                              <Button
+                                variant={
+                                  pathname === page?.path
+                                    ? "secondary"
+                                    : "ghost"
+                                }
+                                onClick={() => router.push(page?.path || "/")}
+                                size="xs"
+                                className={`text-sm hover:bg-muted w-full justify-start font-normal ${
+                                  pathname === page?.path
+                                    ? "text-foreground"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {page.title}
+                              </Button>
+                            </DrawerClose>
                           ))}
                       </div>
                     </div>
